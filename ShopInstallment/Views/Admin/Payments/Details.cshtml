@@ -1,0 +1,246 @@
+@model ShopInstallment.Models.Payment
+@{
+    ViewData["Title"] = "รายละเอียดการชำระเงิน";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-receipt"></i> รายละเอียดการชำระเงิน</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> กลับไป
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">ข้อมูลการชำระเงิน</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="text-muted small">เลขที่ธุรกรรม</p>
+                            <h6 class="font-monospace">@Model.TransactionId</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted small">เลขที่คำสั่งซื้อ</p>
+                            <h6>
+                                <a asp-controller="Orders" asp-action="Details" asp-route-id="@Model.OrderId">
+                                    @Model.Order?.OrderNumber
+                                </a>
+                            </h6>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p class="text-muted small">วิธีการชำระเงิน</p>
+                            <h6>@Model.PaymentMethod</h6>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted small">จำนวนเงิน</p>
+                            <h6>@Model.Amount.ToString("N2") ฿</h6>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted small">ค่าธรรมเนียม</p>
+                            <h6>@Model.FeeAmount.ToString("N2") ฿</h6>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="text-muted small">วันที่ชำระเงิน</p>
+                            <h6>@Model.PaymentDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted small">สถานะ</p>
+                            <div>
+                                @if (Model.Status == "Completed")
+                                {
+                                    <span class="badge bg-success p-2"><i class="bi bi-check-circle"></i> สำเร็จ</span>
+                                }
+                                else if (Model.Status == "EscrowHold")
+                                {
+                                    <span class="badge bg-warning p-2"><i class="bi bi-hourglass-split"></i> รอตรวจสอบ</span>
+                                }
+                                else if (Model.Status == "EscrowReleased")
+                                {
+                                    <span class="badge bg-info p-2"><i class="bi bi-unlock"></i> ปล่อยแล้ว</span>
+                                }
+                                else if (Model.Status == "EscrowFrozen")
+                                {
+                                    <span class="badge bg-danger p-2"><i class="bi bi-lock"></i> ระงับ</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary p-2">@Model.Status</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <hr />
+                        <div>
+                            <p class="text-muted small">หมายเหตุ</p>
+                            <p>@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.Order != null)
+            {
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">รายละเอียดคำสั่งซื้อ</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2"><strong>ลูกค้า:</strong> @Model.Order.CustomerId</p>
+                        <p class="mb-2"><strong>ประเภท:</strong> @Model.Order.OrderType</p>
+                        <p class="mb-2"><strong>ยอดรวม:</strong> @Model.Order.TotalAmount.ToString("N2") ฿</p>
+                        <p class="mb-2"><strong>ชำระแล้ว:</strong> @Model.Order.PaidAmount.ToString("N2") ฿</p>
+                        <p class="mb-0"><strong>คงเหลือ:</strong> @Model.Order.RemainingAmount.ToString("N2") ฿</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            @if (Model.Status == "EscrowHold")
+            {
+                <div class="card border-warning mb-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="mb-0"><i class="bi bi-exclamation-triangle"></i> รอการจัดการ</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">การชำระเงินนี้อยู่ในสถานะ Escrow Hold กรุณาทำการปล่อยหรือระงับเงิน</p>
+
+                        <form asp-action="ReleaseEscrow" method="post" class="mb-2"
+                              onsubmit="return confirm('ยืนยันการปล่อยเงินจำนวน @Model.Amount.ToString("N2") บาท?')">
+                            <input type="hidden" name="paymentId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-success w-100 mb-2">
+                                <i class="bi bi-unlock"></i> ปล่อยเงิน
+                            </button>
+                        </form>
+
+                        <form asp-action="FreezeEscrow" method="post"
+                              onsubmit="return confirm('ยืนยันการระงับเงินจำนวน @Model.Amount.ToString("N2") บาท?')">
+                            <input type="hidden" name="paymentId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-lock"></i> ระงับเงิน
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> ประวัติสถานะ</h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <p class="mb-1"><strong>สร้างธุรกรรม</strong></p>
+                                <small class="text-muted">@Model.PaymentDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                            </div>
+                        </div>
+
+                        @if (Model.Status != "Completed")
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-marker @(Model.Status == "EscrowHold" ? "bg-warning" : "bg-secondary")"></div>
+                                <div class="timeline-content">
+                                    <p class="mb-1"><strong>@GetStatusText(Model.Status)</strong></p>
+                                    <small class="text-muted">@Model.PaymentDate.ToLocalTime().AddSeconds(30).ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-success"></div>
+                                <div class="timeline-content">
+                                    <p class="mb-1"><strong>สำเร็จ</strong></p>
+                                    <small class="text-muted">@Model.PaymentDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-left"></i> กลับไปรายการ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.timeline-marker {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    color: white;
+}
+
+.timeline-content {
+    padding-top: 0.25rem;
+}
+
+.timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    width: 2px;
+    height: 50px;
+    background: #dee2e6;
+}
+</style>
+
+@functions {
+    public string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "EscrowHold" => "รอตรวจสอบ",
+            "EscrowReleased" => "ปล่อยเงิน",
+            "EscrowFrozen" => "ระงับเงิน",
+            _ => status
+        };
+    }
+}

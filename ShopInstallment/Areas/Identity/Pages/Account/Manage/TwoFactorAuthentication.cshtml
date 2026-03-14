@@ -1,0 +1,71 @@
+﻿@page
+@using Microsoft.AspNetCore.Http.Features
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "การตรวจสอบสิทธิ์แบบสองขั้นตอน (2FA)";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h4>@ViewData["Title"]</h4>
+@{
+    var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+    @if (consentFeature?.CanTrack ?? true)
+    {
+        @if (Model.Is2faEnabled)
+        {
+            if (Model.RecoveryCodesLeft == 0)
+            {
+                <div class="alert alert-danger">
+                    <strong>คุณไม่มีรหัสกู้คืนเหลืออยู่แล้ว</strong>
+                    <p>คุณต้อง <a asp-page="./GenerateRecoveryCodes"> สร้างชุดรหัสกู้คืนใหม่</a> ก่อนที่คุณจะสามารถเข้าสู่ระบบโดยใช้รหัสกู้คืนได้</p>
+                </div>
+            }
+            else if (Model.RecoveryCodesLeft == 1)
+            {
+                <div class="alert alert-danger">
+                    <strong>You have 1 recovery code left.</strong>
+                    <p>You can <a asp-page="./GenerateRecoveryCodes">สร้างชุดรหัสกู้คืนใหม่</a>.</p>
+                </div>
+            }
+            else if (Model.RecoveryCodesLeft <= 3)
+            {
+                <div class="alert alert-warning">
+                    <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
+                    <p>You should <a asp-page="./GenerateRecoveryCodes"> สร้างชุดรหัสกู้คืนใหม่</a>.</p>
+                </div>
+            }
+
+            if (Model.IsMachineRemembered)
+            {
+                <form method="post" style="display: inline-block">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-shield-x"></i> ลืมเบราว์เซอร์นี้</button>
+                </form>
+            }
+            <a asp-page="./Disable2fa" class="btn btn-primary"><i class="bi bi-shield-x"></i> ปิดการใช้งาน 2FA</a>
+            <a asp-page="./GenerateRecoveryCodes" class="btn btn-primary"><i class="bi bi-shield-lock"></i> รีเซ็ตโค้ดสำรอง</a>
+        }
+
+        <h6>แอปตรวจสอบสิทธิ์</h6>
+        @if (!Model.HasAuthenticator)
+        {
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary"><i class="bi bi-shield-check"></i> เพิ่มแอปยืนยันตัวตน</a>
+        }
+        else
+        {
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary"><i class="bi bi-shield-check"></i> ตั้งค่าแอปยืนยันตัวตน</a>
+            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-primary"><i class="bi bi-shield-x"></i> รีเซ็ตแอปยืนยันตัวตน</a>
+        }
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <strong>นโยบายความเป็นส่วนตัวและคุกกี้ยังไม่ได้รับการยอมรับ</strong>
+            <p>คุณต้องยอมรับนโยบายก่อนที่จะเปิดใช้งานการตรวจสอบสิทธิ์แบบสองขั้นตอน</p>
+        </div>
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

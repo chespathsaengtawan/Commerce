@@ -1,0 +1,51 @@
+@model ShopInstallment.Models.Size
+@{
+    ViewData["Title"] = "เพิ่มขนาด";
+    var categories = (List<ShopInstallment.Models.Category>)ViewBag.Categories;
+}
+
+<h2><i class="bi bi-rulers"></i> เพิ่มขนาด</h2>
+
+<form asp-action="Create" method="post" class="card p-4 mt-3">
+    @Html.AntiForgeryToken()
+    
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">ชื่อขนาด <span class="text-danger">*</span></label>
+        <input asp-for="Name" class="form-control" placeholder="เช่น S, M, L, XL, Free Size" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">หมวดหมู่สินค้า</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="new SelectList(categories, nameof(ShopInstallment.Models.Category.Id), nameof(ShopInstallment.Models.Category.Name), Model.CategoryId)">
+            <option value="">-- ไม่ระบุหมวดหมู่ --</option>
+        </select>
+        <small class="text-muted">เลือกหมวดหมู่ที่ใช้ขนาดนี้ (ตัวเลือก)</small>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">คำอธิบาย</label>
+        <textarea asp-for="Description" class="form-control" rows="3" placeholder="เช่น ขนาดเล็ก, ขนาดกลาง"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">สถานะ</label>
+        <select asp-for="Status" class="form-select">
+            <option value="Active">ใช้งาน</option>
+            <option value="Inactive">ไม่ใช้งาน</option>
+        </select>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle"></i> บันทึก
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> ยกเลิก
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

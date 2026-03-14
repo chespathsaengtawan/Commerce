@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ShopInstallment</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pastel-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ShopInstallment.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">🛍️ 99Baht Shop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div id="collapse-menu" class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- เมนูสำหรับทุกคน -->
+                        <!--
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house"></i> หน้าหลัก
+                            </a>
+                        </li>
+                        -->
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <!-- เมนูสำหรับลูกค้า (ล็อกอินแล้ว) -->
+                            @if (!User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/Seller/Orders">
+                                        <i class="bi bi-receipt"></i> คำสั่งซื้อของฉัน
+                                    </a>
+                                </li>
+                            }
+                            @if (!User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Wallet" asp-action="Index">
+                                        <i class="bi bi-wallet2"></i> กระเป๋าเงิน
+                                    </a>
+                                </li>
+                            }
+                            
+                            @if (!User.IsInRole("Seller") && !User.IsInRole("Admin"))
+                            {
+                                <!-- ปุ่มสมัครเป็นผู้ขาย -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-warning" asp-area="" asp-controller="Account" asp-action="BecomeSeller">
+                                        <i class="bi bi-shop-window"></i> <strong>เปิดร้านค้า</strong>
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                        @{
+                            var viewMode = Context.Session.GetString("ViewMode") ?? "buyer";
+                            var isBuyerMode = viewMode == "buyer";
+                        }
+
+                        @if (User.IsInRole("Seller") && !User.IsInRole("Admin"))
+                        {
+                            <!-- สลับมุมมอง -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @if (isBuyerMode)
+                                    {
+                                        <i class="bi bi-person-circle"></i> <span>มุมมอง: ผู้ซื้อ</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-shop"></i> <span>มุมมอง: ผู้ขาย</span>
+                                    }
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item @(isBuyerMode ? "active" : "")" asp-controller="Account" asp-action="SwitchViewMode" asp-route-mode="buyer">
+                                            <i class="bi bi-person"></i> ผู้ซื้อ
+                                            @if (isBuyerMode) { <i class="bi bi-check-circle-fill text-success float-end"></i> }
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item @(!isBuyerMode ? "active" : "")" asp-controller="Account" asp-action="SwitchViewMode" asp-route-mode="seller">
+                                            <i class="bi bi-shop"></i> ผู้ขาย
+                                            @if (!isBuyerMode) { <i class="bi bi-check-circle-fill text-success float-end"></i> }
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Seller") && !User.IsInRole("Admin") && !isBuyerMode)
+                        {
+                            <!-- เมนูสำหรับผู้ขาย -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-shop"></i> จัดการร้านค้า
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Products" asp-action="Index">
+                                        <i class="bi bi-box-seam"></i> จัดการสินค้า
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/Seller/Orders">
+                                        <i class="bi bi-receipt-cutoff"></i> คำสั่งซื้อทั้งหมด
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/Seller/Wallet">
+                                        <i class="bi bi-cash-coin"></i> ศูนย์การเงิน
+                                    </a></li>
+                                    <li><a class="dropdown-item" asp-controller="SellerSettings" asp-action="Index">
+                                        <i class="bi bi-gear"></i> ตั้งค่าการชำระเงิน
+                                    </a></li>
+                                </ul>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <!-- เมนูสำหรับแอดมิน -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">
+                                    <i class="bi bi-house"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-shield-check"></i> จัดการข้อมูลหลัก
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Categories" asp-action="Index">
+                                            <i class="bi bi-tags"></i> หมวดหมู่
+                                        </a>
+                                    </li>
+                                    <li><a class="dropdown-item" asp-controller="Brands" asp-action="Index">
+                                        <i class="bi bi-award"></i> แบรนด์
+                                    </a></li>
+                                    <li><a class="dropdown-item" asp-controller="Colors" asp-action="Index">
+                                        <i class="bi bi-palette"></i> สี
+                                    </a></li>
+                                    <li><a class="dropdown-item" asp-controller="Sizes" asp-action="Index">
+                                        <i class="bi bi-rulers"></i> ขนาด
+                                    </a></li>   
+                                </ul>
+                            </li>    
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-shop-window"></i> จัดการร้านค้า
+                                </a>
+                                <ul class="dropdown-menu">
+
+                                    <li><a class="dropdown-item" asp-controller="Orders" asp-action="AdminIndex">
+                                        <i class="bi bi-cart-check"></i> คำสั่งซื้อ
+                                    </a></li>
+                                    <li><a class="dropdown-item" asp-controller="Webhooks" asp-action="Index">
+                                        <i class="bi bi-arrow-left-right"></i> Webhooks
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/Admin/Payments">
+                                        <i class="bi bi-credit-card"></i> การชำระเงิน
+                                    </a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-shield-check"></i> จัดการผู้ใช้งาน
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/Admin/Users">
+                                        <i class="bi bi-people"></i> ผู้ใช้งาน
+                                    </a></li>    
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer text-center">
+        <div class="container py-0 my-0">
+            &copy; 2025 - 99Baht Shop - ขาย เช่า ผ่อน ชุดสวมใส่ร่างกาย
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

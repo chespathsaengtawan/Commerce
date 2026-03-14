@@ -1,0 +1,115 @@
+@using System.Security.Claims
+@model IEnumerable<ShopInstallment.Models.Order>
+@{
+    ViewData["Title"] = "คำสั่งซื้อของฉัน";
+    var isSeller = User.IsInRole("Seller");
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi @(isSeller ? "bi-shop" : "bi-bag")"></i>
+                @(isSeller ? "คำสั่งซื้อสินค้าของฉัน" : "คำสั่งซื้อของฉัน")
+            </h2>
+            <p class="text-muted mb-0">
+                @(isSeller ? "รายการสั่งซื้อสินค้าจากผู้ซื้อ" : "รายการสั่งซื้อที่คุณทำ")
+            </p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            @(isSeller ? "ยังไม่มีผู้ซื้อสั่งซื้อสินค้าของคุณ" : "ยังไม่มีคำสั่งซื้อ")
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 12%;">เลขที่</th>
+                                @if (isSeller)
+                                {
+                                    <th style="width: 18%;">ผู้ซื้อ</th>
+                                }
+                                <th style="width: 12%;">จำนวน<br />สินค้า</th>
+                                <th style="width: 13%;">ยอดรวม</th>
+                                <th style="width: 13%;">ชำระแล้ว</th>
+                                <th style="width: 13%;">คงเหลือ</th>
+                                <th style="width: 12%;">สถานะ</th>
+                                <th style="width: 15%;">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in Model)
+                            {
+                                var statusBadge = o.Status switch
+                                {
+                                    "Pending" => "badge bg-warning text-dark",
+                                    "Confirmed" => "badge bg-info",
+                                    "Completed" => "badge bg-success",
+                                    "Cancelled" => "badge bg-danger",
+                                    _ => "badge bg-secondary"
+                                };
+
+                                var sellerItems = isSeller 
+                                    ? o.OrderItems.Where(oi => oi.Product?.SellerId == userId).Count() 
+                                    : o.OrderItems.Count();
+
+                                <tr>
+                                    <td>
+                                        <strong>#@o.OrderNumber</strong>
+                                        <br />
+                                        <small class="text-muted">@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</small>
+                                    </td>
+                                    @if (isSeller)
+                                    {
+                                        <td>
+                                            <div><strong>@(o.Customer?.FirstName ?? "-")</strong></div>
+                                            <small class="text-muted">@(o.Customer?.Email ?? "-")</small>
+                                        </td>
+                                    }
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-dark">@sellerItems รายการ</span>
+                                    </td>
+                                    <td>
+                                        <h6 class="mb-0">฿@o.TotalAmount.ToString("N2")</h6>
+                                    </td>
+                                    <td>
+                                        <div class="text-success">฿@o.PaidAmount.ToString("N2")</div>
+                                    </td>
+                                    <td>
+                                        <div class="@(o.RemainingAmount > 0 ? "text-danger" : "text-success")">
+                                            ฿@o.RemainingAmount.ToString("N2")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="@statusBadge">@o.Status</span>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-sm btn-outline-primary" 
+                                           href="@(isSeller ? $"/Seller/Orders/{o.Id}" : $"/Orders/{o.Id}")"
+                                           title="ดูรายละเอียด">
+                                            <i class="bi bi-eye"></i> ดู
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+.table-hover tbody tr:hover { background: #f8f9fa; }
+</style>

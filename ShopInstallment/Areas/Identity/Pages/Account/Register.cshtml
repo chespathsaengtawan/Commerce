@@ -1,0 +1,201 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "สมัครสมาชิก";
+}
+
+<style>
+    .register-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #F9F9F9 0%, rgb(193, 229, 159) 100%);
+    }
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        max-width: 1100px;
+        width: 100%;
+    }
+    .register-side {
+        height: 100%;
+        background: linear-gradient(135deg, #3F52E3 0%, rgb(163, 215, 138) 100%);
+        color: white;
+        padding: 70px 45px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .register-side h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 20px; }
+    .register-side p { font-size: 1.05rem; opacity: 0.9; margin-bottom: 28px; }
+    .register-form-side { padding: 60px 55px; }
+    .form-control:focus {
+        border-color: #3F52E3;
+        box-shadow: 0 0 0 0.25rem rgba(63, 82, 227, 0.15);
+    }
+    .btn-register {
+        background: linear-gradient(135deg, #3F52E3 0%, rgb(163, 215, 138) 100%);
+        border: none;
+        color: white;
+        font-weight: 700;
+        padding: 14px;
+        border-radius: 12px;
+        transition: all 0.3s;
+    }
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(63, 82, 227, 0.3);
+        background: linear-gradient(135deg, #3F52E3 0%, rgb(143, 195, 118) 100%);
+    }
+    .btn-social {
+        border: 2px solid #e0e0e0;
+        background: white;
+        color: #333;
+        font-weight: 500;
+        padding: 12px;
+        border-radius: 10px;
+        transition: all 0.3s;
+        margin: 6px 0;
+    }
+    .btn-social:hover { border-color: #3F52E3; background: #f8f9ff; transform: translateY(-2px); }
+    .btn-google { background: rgb(255, 147, 126); color: white; border: none; }
+    .btn-google:hover { background: rgb(255, 127, 106); color: white; }
+    .btn-facebook { background: #3F52E3; color: white; border: none; }
+    .btn-facebook:hover { background: #2F42D3; color: white; }
+    .link-pastel { color: #3F52E3; text-decoration: none; transition: all 0.3s; }
+    .link-pastel:hover { color: rgb(163, 215, 138); text-decoration: underline; }
+    .alert-pastel { background: rgb(255, 147, 126); color: white; border: none; border-radius: 10px; }
+    .divider { display: flex; align-items: center; text-align: center; margin: 30px 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #e0e0e0; }
+    .divider span { padding: 0 15px; color: #999; font-size: 0.9rem; }
+    @@media (max-width: 768px) {
+        .register-side { display: none; }
+        .register-form-side { padding: 40px 30px; }
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="row g-0">
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="register-side">
+                    <i class="bi bi-stars" style="font-size: 3.5rem; margin-bottom: 20px;"></i>
+                    <h2>ยินดีต้อนรับสู่ </h2>
+                    <h3>🛍️ 99Baht Shop</h3>
+                    <p>สมัครสมาชิกเพื่อเริ่มต้น ขาย / เช่า / ผ่อน<br/>สินค้าที่คุณต้องการ</p>
+                    <div class="d-flex flex-column gap-2 text-start">
+                        <span><i class="bi bi-check-circle me-2"></i> สมัครง่าย ไม่กี่ขั้นตอน</span>
+                        <span><i class="bi bi-check-circle me-2"></i> เชื่อมต่อผู้ซื้อ-ผู้ขาย</span>
+                        <span><i class="bi bi-check-circle me-2"></i> ระบบปลอดภัย มั่นใจ</span>
+                    </div>
+                        <a href="~/" target="_blank" class="btn btn-outline-light mt-4">
+                            <i class="bi bi-box-arrow-up-right"></i> เยี่ยมชมร้านค้า
+                        </a>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="register-form-side">
+                    <div class="text-center mb-4 d-lg-none">
+                        <h3><i class="bi bi-shop-window"></i> 99Baht Shop</h3>
+                        <p class="text-muted">สมัครสมาชิกใหม่</p>
+                    </div>
+
+                    <h2 class="mb-1 text-center"><i class="bi bi-person-plus text-primary"></i> สมัครสมาชิก</h2>
+                    <p class="text-muted mb-4 text-center">กรอกข้อมูลเพื่อสร้างบัญชีใหม่</p>
+
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-pastel mb-4" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label">
+                                <i class="bi bi-envelope"></i> อีเมล
+                            </label>
+                            <input asp-for="Input.Email" class="form-control form-control-lg" autocomplete="username" aria-required="true" placeholder="your@email.com" />
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label">
+                                <i class="bi bi-lock"></i> รหัสผ่าน
+                            </label>
+                            <input asp-for="Input.Password" class="form-control form-control-lg" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.ConfirmPassword" class="form-label">
+                                <i class="bi bi-shield-check"></i> ยืนยันรหัสผ่าน
+                            </label>
+                            <input asp-for="Input.ConfirmPassword" class="form-control form-control-lg" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button id="registerSubmit" type="submit" class="btn btn-lg btn-register">
+                                <i class="bi bi-person-plus"></i> สมัครสมาชิก
+                            </button>
+                        </div>
+
+                        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                        {
+                            <div class="divider">
+                                <span>หรือสมัครด้วย</span>
+                            </div>
+
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                                <div class="d-grid gap-2">
+                                    @foreach (var provider in Model.ExternalLogins!)
+                                    {
+                                        @if (provider.Name == "Google")
+                                        {
+                                            <button type="submit" class="btn btn-google btn-social" name="provider" value="@provider.Name" title="สมัครด้วย @provider.DisplayName">
+                                                <i class="bi bi-google"></i> สมัครด้วย Google
+                                            </button>
+                                        }
+                                        else if (provider.Name == "Facebook")
+                                        {
+                                            <button type="submit" class="btn btn-facebook btn-social" name="provider" value="@provider.Name" title="สมัครด้วย @provider.DisplayName">
+                                                <i class="bi bi-facebook"></i> สมัครด้วย Facebook
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-social" name="provider" value="@provider.Name" title="สมัครด้วย @provider.DisplayName">
+                                                <i class="bi bi-box-arrow-in-right"></i> สมัครด้วย @provider.DisplayName
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </form>
+                        }
+
+                        <hr class="my-4" />
+
+                        <div class="text-center">
+                            <p class="mb-2">
+                                <small class="text-muted">มีบัญชีแล้ว?</small>
+                                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="link-pastel fw-bold">
+                                    เข้าสู่ระบบ
+                                </a>
+                            </p>
+                            <p class="mb-0">
+                                <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="link-pastel small">
+                                    <i class="bi bi-envelope-check"></i> ส่งอีเมลยืนยันอีกครั้ง
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

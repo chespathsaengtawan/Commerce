@@ -1,0 +1,32 @@
+@model IEnumerable<ShopInstallment.Models.Category>
+@{
+    ViewData["Title"] = "หมวดหมู่สินค้า";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>หมวดหมู่สินค้า</h2>
+    <a class="btn btn-primary" asp-action="Create">เพิ่มหมวดหมู่</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ชื่อ</th>
+            <th>สถานะ</th>
+            <th>อัพเดท</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Status</td>
+            <td>@item.UpdatedAt?.ToLocalTime()</td>
+            <td class="text-end">
+                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">แก้ไข</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">ลบ</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

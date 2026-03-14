@@ -1,0 +1,348 @@
+@model ShopInstallment.Models.Order
+@{
+    var setting = (ShopInstallment.Models.SellerPaymentSetting)ViewBag.SellerSetting;
+    var coinBalance = (decimal)ViewBag.CoinBalance;
+    ViewData["Title"] = $"ชำระเงินคำสั่ง {Model.OrderNumber}";
+}
+
+<div class="container mt-4">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-receipt"></i> สรุปคำสั่งซื้อ</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="text-muted">เลขที่คำสั่ง</p>
+                            <h6>@Model.OrderNumber</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted">ประเภท</p>
+                            <h6>
+                                @if (Model.OrderType == "Purchase")
+                                {
+                                    <span class="badge bg-success">ซื้อสินค้า</span>
+                                }
+                                else if (Model.OrderType == "Rent")
+                                {
+                                    <span class="badge bg-info">เช่าสินค้า</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">ผ่อนจ่าย</span>
+                                }
+                            </h6>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h6 class="mb-3">รายการสินค้า</h6>
+                    <table class="table table-sm table-borderless">
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.Product?.Name</strong>
+                                        <br />
+                                        <small class="text-muted">จำนวน: @item.Quantity</small>
+                                    </td>
+                                    <td class="text-end">
+                                        @item.TotalPrice.ToString("N2") ฿
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <hr />
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <p class="text-muted mb-1">ยอดรวม</p>
+                            <h6>@Model.TotalAmount.ToString("N2") ฿</h6>
+                        </div>
+                        <div class="col-6">
+                            <p class="text-muted mb-1">ชำระแล้ว</p>
+                            <h6>@Model.PaidAmount.ToString("N2") ฿</h6>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning mt-3 mb-0">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>ยอดคงเหลือที่ต้องชำระ</strong>
+                        <h4 class="text-danger mt-2">@Model.RemainingAmount.ToString("N2") ฿</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-credit-card"></i> เลือกช่องทางชำระเงิน</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Payments" asp-action="Create" method="post">
+                        <input type="hidden" name="orderId" value="@Model.Id" />
+
+                        <div class="d-grid gap-2">
+                            @if (setting?.AllowPromptPay == true)
+                            {
+                                <label class="payment-option">
+                                    <input type="radio" name="method" value="PromptPay" class="form-check-input" checked />
+                                    <div class="payment-card">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1"><i class="bi bi-qr-code"></i> PromptPay</h6>
+                                                <small class="text-muted">สแกน QR Code ทันที</small>
+                                            </div>
+                                            <span class="badge bg-secondary">@setting.PromptPayFeePercent%</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            }
+
+                            @if (setting?.AllowBillPayment == true)
+                            {
+                                <label class="payment-option">
+                                    <input type="radio" name="method" value="BillPayment" class="form-check-input" />
+                                    <div class="payment-card">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1"><i class="bi bi-receipt"></i> Bill Payment</h6>
+                                                <small class="text-muted">ชำระผ่านบิล ณ ร้าน</small>
+                                            </div>
+                                            <span class="badge bg-secondary">@setting.BillPaymentFeePercent%</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            }
+
+                            @if (setting?.AllowTrueWallet == true)
+                            {
+                                <label class="payment-option">
+                                    <input type="radio" name="method" value="TrueWallet" class="form-check-input" />
+                                    <div class="payment-card">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1"><i class="bi bi-wallet2"></i> True Wallet</h6>
+                                                <small class="text-muted">ผ่านกระเป๋า True Money</small>
+                                            </div>
+                                            <span class="badge bg-secondary">@setting.TrueWalletFeePercent%</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            }
+
+                            @if (setting?.AllowBankTransfer == true)
+                            {
+                                <label class="payment-option">
+                                    <input type="radio" name="method" value="BankTransfer" class="form-check-input" />
+                                    <div class="payment-card">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1"><i class="bi bi-bank"></i> โอนธนาคาร</h6>
+                                                <small class="text-muted">โอนเงินผ่านธนาคาร</small>
+                                            </div>
+                                            <span class="badge bg-secondary">@setting.BankTransferFeePercent%</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            }
+
+                            @if (setting?.AllowCoin == true)
+                            {
+                                var isCoinSufficient = coinBalance >= Model.RemainingAmount;
+                                <label class="payment-option @(!isCoinSufficient ? "disabled" : "")">
+                                    <input type="radio" name="method" value="Coin" class="form-check-input" 
+                                           @(!isCoinSufficient ? "disabled" : "") />
+                                    <div class="payment-card @(!isCoinSufficient ? "opacity-50" : "border-success border-2")">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1"><i class="bi bi-coin"></i> Coin ภายในระบบ</h6>
+                                                <small class="text-muted">คงเหลือ: @coinBalance.ToString("N2") Coin</small>
+                                            </div>
+                                            <span class="badge bg-secondary">@setting.CoinFeePercent%</span>
+                                        </div>
+                                        @if (!isCoinSufficient)
+                                        {
+                                            <div class="alert alert-danger alert-sm mt-2 mb-0">
+                                                <small><i class="bi bi-exclamation-circle"></i> Coin ไม่เพียงพอ</small>
+                                            </div>
+                                        }
+                                    </div>
+                                </label>
+                            }
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-check-circle"></i> ยืนยันการชำระเงิน
+                            </button>
+                        </div>
+
+                        <div class="mt-2">
+                            <a asp-controller="Orders" asp-action="Details" asp-route-id="@Model.Id" 
+                               class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-arrow-left"></i> ย้อนกลับ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @if (setting?.AllowCoin == true && coinBalance < Model.RemainingAmount)
+            {
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-lightbulb"></i>
+                    <strong>Coin ไม่เพียงพอ?</strong>
+                    <p class="mb-0 mt-2">
+                        <a asp-controller="Wallet" asp-action="TopUp" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-circle"></i> เติมเงินเพิ่มเติม
+                        </a>
+                    </p>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.Payments?.Any() == true)
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-clock-history"></i> ประวัติการชำระเงิน</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>วันที่/เวลา</th>
+                                <th>วิธีการ</th>
+                                <th>ยอดเงิน</th>
+                                <th>ค่าธรรมเนียม</th>
+                                <th>สถานะ</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.Payments)
+                            {
+                                <tr>
+                                    <td>
+                                        <small>@p.PaymentDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                    </td>
+                                    <td>
+                                        <strong>@p.PaymentMethod</strong>
+                                    </td>
+                                    <td>
+                                        @p.Amount.ToString("N2") ฿
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">@p.FeeAmount.ToString("N2") ฿</small>
+                                    </td>
+                                    <td>
+                                        @if (p.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> สำเร็จ</span>
+                                        }
+                                        else if (p.Status == "EscrowHold")
+                                        {
+                                            <span class="badge bg-warning"><i class="bi bi-hourglass-split"></i> รอตรวจสอบ</span>
+                                        }
+                                        else if (p.Status == "EscrowReleased")
+                                        {
+                                            <span class="badge bg-info"><i class="bi bi-unlock"></i> ปล่อยแล้ว</span>
+                                        }
+                                        else if (p.Status == "EscrowFrozen")
+                                        {
+                                            <span class="badge bg-danger"><i class="bi bi-lock"></i> ระงับ</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@p.Status</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (User.IsInRole("Admin") && p.Status == "EscrowHold")
+                                        {
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <form asp-controller="Payments" asp-action="ReleaseEscrow" method="post" class="d-inline">
+                                                    <input type="hidden" name="paymentId" value="@p.Id" />
+                                                    <button type="submit" class="btn btn-outline-success" title="ปล่อยเงิน">
+                                                        <i class="bi bi-unlock"></i>
+                                                    </button>
+                                                </form>
+                                                <form asp-controller="Payments" asp-action="FreezeEscrow" method="post" class="d-inline">
+                                                    <input type="hidden" name="paymentId" value="@p.Id" />
+                                                    <button type="submit" class="btn btn-outline-danger" title="ระงับเงิน">
+                                                        <i class="bi bi-lock"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+.payment-option {
+    cursor: pointer;
+    position: relative;
+    display: block;
+    margin-bottom: 0;
+}
+
+.payment-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.payment-card {
+    padding: 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.payment-option input[type="radio"]:checked + .payment-card {
+    border-color: #198754;
+    background-color: #e8f5e9;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.payment-option:hover .payment-card {
+    border-color: #999;
+    background-color: #fff;
+}
+
+.payment-option.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.payment-option.disabled .payment-card {
+    cursor: not-allowed;
+}
+</style>

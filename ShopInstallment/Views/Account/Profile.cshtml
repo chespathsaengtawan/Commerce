@@ -1,0 +1,67 @@
+@model ShopInstallment.Models.ApplicationUser
+@{
+    ViewData["Title"] = "โปรไฟล์";
+    var roles = (IList<string>)ViewBag.Roles;
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-circle"></i> โปรไฟล์ของฉัน
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label fw-bold">อีเมล:</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-plaintext">@Model.Email</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label fw-bold">ชื่อผู้ใช้:</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-plaintext">@Model.UserName</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label fw-bold">บทบาท:</label>
+                        <div class="col-sm-9">
+                            @if (roles.Any())
+                            {
+                                @foreach (var role in roles)
+                                {
+                                    <span class="badge bg-info me-1">@role</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">ผู้ใช้ทั่วไป</span>
+                            }
+                        </div>
+                    </div>
+
+                    @if (!roles.Contains("Seller") && !roles.Contains("Admin"))
+                    {
+                        <hr>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> 
+                            คุณยังไม่ได้เป็นผู้ขาย 
+                            <a asp-action="BecomeSeller" class="alert-link">คลิกที่นี่เพื่อสมัครเป็นผู้ขาย</a>
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> กลับหน้าหลัก
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

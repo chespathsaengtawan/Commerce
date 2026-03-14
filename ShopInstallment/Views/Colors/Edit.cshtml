@@ -1,0 +1,85 @@
+@model ShopInstallment.Models.Color
+@{
+    ViewData["Title"] = "แก้ไขสี";
+}
+
+<h2><i class="bi bi-palette"></i> แก้ไขสี</h2>
+
+<form asp-action="Edit" method="post" class="card p-4 mt-3">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">ชื่อสี <span class="text-danger">*</span></label>
+                <input asp-for="Name" class="form-control" placeholder="เช่น แดง, น้ำเงิน" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="HexCode" class="form-label">รหัสสี (Hex Code) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input type="color" class="form-control form-control-color" 
+                           id="colorPicker" value="@Model.HexCode" style="width: 80px;" />
+                    <input asp-for="HexCode" type="text" class="form-control" 
+                           id="hexInput" placeholder="#000000" pattern="^#[0-9A-Fa-f]{6}$" required />
+                </div>
+                <small class="text-muted">เลือกจาก color picker หรือพิมพ์รหัสสีเอง</small>
+                <span asp-validation-for="HexCode" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">ตัวอย่างสี</label>
+        <div id="colorPreview" style="width: 100%; height: 60px; border: 2px solid #ccc; border-radius: 8px; background-color: @Model.HexCode;">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">สถานะ</label>
+        <select asp-for="Status" class="form-select">
+            <option value="Active">ใช้งาน</option>
+            <option value="Inactive">ไม่ใช้งาน</option>
+        </select>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle"></i> บันทึก
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> ยกเลิก
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const hexInput = document.getElementById('hexInput');
+        const colorPreview = document.getElementById('colorPreview');
+
+        colorPicker.addEventListener('input', function() {
+            hexInput.value = this.value.toUpperCase();
+            colorPreview.style.backgroundColor = this.value;
+        });
+
+        hexInput.addEventListener('input', function() {
+            if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+                colorPicker.value = this.value;
+                colorPreview.style.backgroundColor = this.value;
+            }
+        });
+
+        // Set initial values
+        if (hexInput.value) {
+            colorPicker.value = hexInput.value;
+            colorPreview.style.backgroundColor = hexInput.value;
+        }
+    </script>
+}

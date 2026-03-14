@@ -1,0 +1,39 @@
+@model ShopInstallment.Models.Brand
+@{
+    ViewData["Title"] = "แก้ไขแบรนด์";
+}
+
+<h2><i class="bi bi-award"></i> แก้ไขแบรนด์</h2>
+
+<form asp-action="Edit" method="post" class="card p-4 mt-3">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedAt" />
+    
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">ชื่อแบรนด์ <span class="text-danger">*</span></label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">สถานะ</label>
+        <select asp-for="Status" class="form-select">
+            <option value="Active">ใช้งาน</option>
+            <option value="Inactive">ไม่ใช้งาน</option>
+        </select>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle"></i> บันทึก
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> ยกเลิก
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

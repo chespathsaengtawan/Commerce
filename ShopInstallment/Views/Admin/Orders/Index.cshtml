@@ -1,0 +1,335 @@
+@model IEnumerable<Order>
+@{
+    ViewData["Title"] = "จัดการคำสั่งซื้อทั้งหมด - Admin";
+    var totalOrders = Model.Count();
+    var pendingOrders = Model.Count(o => o.Status == "Pending");
+    var confirmedOrders = Model.Count(o => o.Status == "Confirmed");
+    var completedOrders = Model.Count(o => o.Status == "Completed");
+    var cancelledOrders = Model.Count(o => o.Status == "Cancelled");
+    var totalAmount = Model.Sum(o => o.TotalAmount);
+    var paidAmount = Model.Sum(o => o.PaidAmount);
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-cart-check"></i> จัดการคำสั่งซื้อทั้งหมด
+            </h2>
+            <p class="text-muted mb-0">
+                <i class="bi bi-database"></i> คำสั่งซื้อทั้งหมดในระบบ
+            </p>
+        </div>
+        <div>
+            <button class="btn btn-outline-primary" onclick="window.location.reload()">
+                <i class="bi bi-arrow-clockwise"></i> รีเฟรช
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1 small">คำสั่งซื้อทั้งหมด</p>
+                            <h3 class="mb-0">@totalOrders</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-cart3 fs-4 text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1 small">รอดำเนินการ</p>
+                            <h3 class="mb-0">@pendingOrders</h3>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1 small">ยืนยันแล้ว</p>
+                            <h3 class="mb-0">@confirmedOrders</h3>
+                        </div>
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-check-circle fs-4 text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted mb-1 small">สำเร็จ</p>
+                            <h3 class="mb-0">@completedOrders</h3>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-check2-all fs-4 text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Summary -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">มูลค่าคำสั่งซื้อรวม</p>
+                            <h4 class="mb-0 text-primary">฿@totalAmount.ToString("N2")</h4>
+                        </div>
+                        <i class="bi bi-cash-stack fs-2 text-primary opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">ยอดชำระเงินแล้ว</p>
+                            <h4 class="mb-0 text-success">฿@paidAmount.ToString("N2")</h4>
+                        </div>
+                        <i class="bi bi-wallet2 fs-2 text-success opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-list-ul"></i> รายการคำสั่งซื้อทั้งหมด
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">เลขที่คำสั่งซื้อ</th>
+                            <th>ผู้ซื้อ</th>
+                            <th>ผู้ขาย</th>
+                            <th>ประเภท</th>
+                            <th class="text-end">มูลค่า</th>
+                            <th class="text-end">ชำระแล้ว</th>
+                            <th class="text-center">สถานะ</th>
+                            <th>วันที่สร้าง</th>
+                            <th class="text-center pe-4">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var order in Model)
+                            {
+                                var statusBadge = order.Status switch
+                                {
+                                    "Pending" => "badge bg-warning text-dark",
+                                    "Confirmed" => "badge bg-info text-white",
+                                    "Completed" => "badge bg-success",
+                                    "Cancelled" => "badge bg-danger",
+                                    _ => "badge bg-secondary"
+                                };
+
+                                var typeBadge = order.OrderType switch
+                                {
+                                    "Purchase" => "badge bg-primary",
+                                    "Rent" => "badge bg-purple",
+                                    "Installment" => "badge bg-orange",
+                                    _ => "badge bg-secondary"
+                                };
+
+                                var firstProduct = order.OrderItems.FirstOrDefault()?.Product;
+                                var sellerName = firstProduct?.Seller?.FirstName ?? "ไม่ระบุ";
+                                var sellerEmail = firstProduct?.Seller?.Email ?? "N/A";
+                                var customerName = order.Customer?.FirstName ?? "ไม่ระบุ";
+                                var customerEmail = order.Customer?.Email ?? "N/A";
+
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">#@order.OrderNumber</div>
+                                        <small class="text-muted">ID: @order.Id</small>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <i class="bi bi-person-circle text-primary"></i>
+                                            <strong>@customerName</strong>
+                                        </div>
+                                        <small class="text-muted">@customerEmail</small>
+                                    </td>
+                                    <td>
+                                        @if (firstProduct?.Seller != null)
+                                        {
+                                            <div>
+                                                <i class="bi bi-shop text-info"></i>
+                                                <strong>@sellerName</strong>
+                                            </div>
+                                            <small class="text-muted">@sellerEmail</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">ไม่มีข้อมูล</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="@typeBadge">
+                                            @(order.OrderType == "Purchase" ? "ซื้อ" :
+                                              order.OrderType == "Rent" ? "เช่า" :
+                                              order.OrderType == "Installment" ? "ผ่อน" : order.OrderType)
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>฿@order.TotalAmount.ToString("N2")</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="text-success">฿@order.PaidAmount.ToString("N2")</span>
+                                        @if (order.RemainingAmount > 0)
+                                        {
+                                            <div>
+                                                <small class="text-danger">คงเหลือ: ฿@order.RemainingAmount.ToString("N2")</small>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="@statusBadge">
+                                            @(order.Status == "Pending" ? "รอดำเนินการ" :
+                                              order.Status == "Confirmed" ? "ยืนยันแล้ว" :
+                                              order.Status == "Completed" ? "สำเร็จ" :
+                                              order.Status == "Cancelled" ? "ยกเลิก" : order.Status)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div>@order.CreatedAt.ToString("dd/MM/yyyy")</div>
+                                        <small class="text-muted">@order.CreatedAt.ToString("HH:mm")</small>
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="AdminDetails" asp-route-id="@order.Id" 
+                                               class="btn btn-outline-primary" 
+                                               title="ดูรายละเอียด">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            
+                                            @if (order.Status == "Pending")
+                                            {
+                                                <button type="button" class="btn btn-outline-success" 
+                                                        onclick="confirmOrder(@order.Id)"
+                                                        title="ยืนยันคำสั่งซื้อ">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </button>
+                                            }
+                                            
+                                            @if (order.Status != "Cancelled" && order.Status != "Completed")
+                                            {
+                                                <button type="button" class="btn btn-outline-danger" 
+                                                        onclick="cancelOrder(@order.Id)"
+                                                        title="ยกเลิกคำสั่งซื้อ">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                        <p class="mb-0">ไม่มีคำสั่งซื้อในระบบ</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-purple {
+        background-color: #9b59b6 !important;
+    }
+    .bg-orange {
+        background-color: #e67e22 !important;
+    }
+    .table > tbody > tr:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function confirmOrder(orderId) {
+            if (confirm('ยืนยันการดำเนินการคำสั่งซื้อนี้?')) {
+                fetch(`/Orders/AdminConfirmOrder/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('เกิดข้อผิดพลาดในการยืนยันคำสั่งซื้อ');
+                    }
+                });
+            }
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('ยืนยันการยกเลิกคำสั่งซื้อนี้?')) {
+                fetch(`/Orders/AdminCancelOrder/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('เกิดข้อผิดพลาดในการยกเลิกคำสั่งซื้อ');
+                    }
+                });
+            }
+        }
+    </script>
+}

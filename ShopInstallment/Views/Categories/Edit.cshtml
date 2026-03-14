@@ -1,0 +1,26 @@
+@model ShopInstallment.Models.Category
+@{
+    ViewData["Title"] = "แก้ไขหมวดหมู่";
+}
+<h2>แก้ไขหมวดหมู่</h2>
+<form asp-action="Edit" method="post" class="card p-3">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-select">
+            <option>Active</option>
+            <option>Inactive</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">บันทึก</button>
+    <a asp-action="Index" class="btn btn-secondary">ย้อนกลับ</a>
+</form>

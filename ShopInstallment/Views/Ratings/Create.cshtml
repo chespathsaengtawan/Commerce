@@ -1,0 +1,20 @@
+@model ShopInstallment.Models.ProductRating
+@{
+    var product = (ShopInstallment.Models.Product)ViewBag.Product;
+    ViewData["Title"] = $"เขียนรีวิว: {product.Name}";
+}
+<h3>เขียนรีวิว: @product.Name</h3>
+<form asp-action="Create" method="post" class="card p-3">
+    <input type="hidden" asp-for="ProductId" />
+    <div class="mb-3">
+        <label asp-for="Stars" class="form-label">ให้คะแนน (1-5)</label>
+        <input asp-for="Stars" class="form-control" type="number" min="1" max="5" />
+        <span asp-validation-for="Stars" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Review" class="form-label">รีวิว</label>
+        <textarea asp-for="Review" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">บันทึก</button>
+    <a class="btn btn-secondary" asp-action="Product" asp-route-productId="@product.Id">ย้อนกลับ</a>
+</form>

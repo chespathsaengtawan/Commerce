@@ -1,0 +1,229 @@
+@model ShopInstallment.Models.Product
+@{
+    ViewData["Title"] = "เพิ่มสินค้า";
+}
+<h2>เพิ่มสินค้า</h2>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="card p-3">
+    <div class="row">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+           <button class="nav-link active" id="base-tab" data-bs-toggle="tab" data-bs-target="#base" type="button" role="tab" aria-controls="base" aria-selected="true">ข้อมูลทั่วไป</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" type="button" role="tab" aria-controls="category" aria-selected="false">ข้อมูลอื่นๆ</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="image-tab" data-bs-toggle="tab" data-bs-target="#image" type="button" role="tab" aria-controls="image" aria-selected="false">รูปภาพ</button>
+          </li>
+
+        </ul>
+        <div class="tab-content" id="myTabContent">
+        <div class="col-md-6 tab-pane fade show active" id="base" role="tabpanel" aria-labelledby="base-tab">
+            <div class="p-3">
+                <div class="mb-3 ">
+                    <label asp-for="Name" class="form-label">ชื่อสินค้า</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">รายละเอียด</label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PricePerUnit" class="form-label">ราคาขาย</label>
+                    <input asp-for="PricePerUnit" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="RentPricePerDay" class="form-label">ราคาค่าเช่าต่อวัน</label>
+                    <input asp-for="RentPricePerDay" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Stock" class="form-label">จำนวนสินค้า</label>
+                    <input asp-for="Stock" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">สถานะ</label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="Active">ใช้งาน -Active</option>
+                        <option value="Inactive">ไม่ใช้งาน -Inactive</option>
+                        <option value="OutOfStock">สินค้าหมด -OutOfStock</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 tab-pane fade" id="category" role="tabpanel" aria-labelledby="category-tab">
+            <div class="p-3">
+                <div class="mb-3">
+                    <label class="form-label">หมวดหมู่</label>
+                    <select asp-for="CategoryId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Category>)ViewBag.Categories, nameof(ShopInstallment.Models.Category.Id), nameof(ShopInstallment.Models.Category.Name))"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">แบรนด์</label>
+                    <select asp-for="BrandId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Brand>)ViewBag.Brands, nameof(ShopInstallment.Models.Brand.Id), nameof(ShopInstallment.Models.Brand.Name))"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">สี</label>
+                    <select asp-for="ColorId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Color>)ViewBag.Colors, nameof(ShopInstallment.Models.Color.Id), nameof(ShopInstallment.Models.Color.Name))"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">ขนาด</label>
+                    <select asp-for="SizeId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Size>)ViewBag.Sizes, nameof(ShopInstallment.Models.Size.Id), nameof(ShopInstallment.Models.Size.Name))"></select>
+                </div>    
+            </div>        
+        </div>
+        <div class="col-md-6 tab-pane fade" id="image" role="tabpanel" aria-labelledby="image-tab">
+            <div class="p-3">
+                <!-- รูปหลัก -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-image"></i> รูปหลัก (1 รูป) <span class="text-danger">*</span>
+                    </label>
+                    <input type="file" id="mainImage" name="mainImage" accept="image/*" class="form-control" required />
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> อัตราส่วน 3:4 (แนะนำ 600x800px) | ขนาดไม่เกิน 2MB
+                    </small>
+                    <div id="mainImagePreview" class="mt-2"></div>
+                </div>
+
+                <!-- รูปเพิ่มเติม -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-images"></i> รูปเพิ่มเติม (สูงสุด 4 รูป)
+                    </label>
+                    <input type="file" id="additionalImages" name="images" multiple accept="image/*" class="form-control" />
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> อัตราส่วน 3:4 | ขนาดไม่เกิน 2MB ต่อรูป
+                    </small>
+                    <div id="additionalImagesPreview" class="mt-2 row g-2"></div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="bi bi-lightbulb"></i> 
+                    <strong>Tips:</strong> รูปที่มีคุณภาพดีจะช่วยเพิ่มโอกาสการขาย
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success" id="submitBtn">
+            <i class="bi bi-check-circle"></i> บันทึกสินค้า
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> ย้อนกลับ
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        // ตรวจสอบอัตราส่วนและขนาดรูป
+        function validateImage(file) {
+            return new Promise((resolve, reject) => {
+                if (file.size > 2 * 1024 * 1024) {
+                    reject('ขนาดไฟล์ต้องไม่เกิน 2MB');
+                    return;
+                }
+
+                const img = new Image();
+                img.onload = function() {
+                    const ratio = this.width / this.height;
+                    const expectedRatio = 3 / 4;
+                    const tolerance = 0.1;
+                    
+                    if (Math.abs(ratio - expectedRatio) > tolerance) {
+                        reject(`อัตราส่วนควรเป็น 3:4 (ปัจจุบัน: ${this.width}x${this.height})`);
+                    } else {
+                        resolve(true);
+                    }
+                };
+                img.onerror = () => reject('ไม่สามารถอ่านไฟล์ได้');
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // Preview รูปหลัก
+        document.getElementById('mainImage').addEventListener('change', async function(e) {
+            const preview = document.getElementById('mainImagePreview');
+            preview.innerHTML = '';
+
+            if (this.files && this.files[0]) {
+                try {
+                    await validateImage(this.files[0]);
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = `
+                            <div class="card" style="max-width: 300px;">
+                                <img src="${e.target.result}" class="card-img-top" style="height: 400px; object-fit: cover;">
+                                <div class="card-body">
+                                    <small class="text-success">
+                                        <i class="bi bi-check-circle-fill"></i> รูปหลัก - ถูกต้อง
+                                    </small>
+                                </div>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                } catch (error) {
+                    preview.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ${error}</div>`;
+                    this.value = '';
+                }
+            }
+        });
+
+        // Preview รูปเพิ่มเติม
+        document.getElementById('additionalImages').addEventListener('change', async function(e) {
+            const preview = document.getElementById('additionalImagesPreview');
+            preview.innerHTML = '';
+
+            if (this.files && this.files.length > 0) {
+                if (this.files.length > 4) {
+                    alert('เลือกได้สูงสุด 4 รูปเท่านั้น');
+                    this.value = '';
+                    return;
+                }
+
+                for (let i = 0; i < this.files.length; i++) {
+                    try {
+                        await validateImage(this.files[i]);
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const div = document.createElement('div');
+                            div.className = 'col-6';
+                            div.innerHTML = `
+                                <div class="card">
+                                    <img src="${e.target.result}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body p-2">
+                                        <small class="text-success">
+                                            <i class="bi bi-check-circle-fill"></i> รูป ${i + 1}
+                                        </small>
+                                    </div>
+                                </div>
+                            `;
+                            preview.appendChild(div);
+                        };
+                        reader.readAsDataURL(this.files[i]);
+                    } catch (error) {
+                        const div = document.createElement('div');
+                        div.className = 'col-12';
+                        div.innerHTML = `<div class="alert alert-danger">รูป ${i + 1}: ${error}</div>`;
+                        preview.appendChild(div);
+                        this.value = '';
+                        break;
+                    }
+                }
+            }
+        });
+    </script>
+}
+
+<style>
+    .card-img-top {
+        border-radius: 8px;
+    }
+    #mainImagePreview img,
+    #additionalImagesPreview img {
+        border: 2px solid #dee2e6;
+    }
+</style>

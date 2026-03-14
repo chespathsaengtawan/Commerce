@@ -1,0 +1,42 @@
+@model IEnumerable<ShopInstallment.Models.Product>
+@{
+    ViewData["Title"] = "สินค้า";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>สินค้า</h2>
+    <a class="btn btn-primary" asp-action="Create">เพิ่มสินค้า</a>
+</div>
+<div class="row">
+@foreach (var p in Model)
+{
+    <div class="col-md-4">
+        <div class="card product-card">
+            <div class="card-header">@p.Name</div>
+            <img class="product-image" src="@p.MainImage" alt="@p.Name" />
+            <div class="card-body">
+                <div class="mb-2">ราคา: @p.PricePerUnit.ToString("N2") บาท</div>
+                @if (p.RentPricePerDay.HasValue){<div class="mb-2">เช่า/วัน: @p.RentPricePerDay.Value.ToString("N2") บาท</div>}
+                <div class="mb-2">สต็อก: <span class="badge bg-secondary">@p.Stock</span></div>
+                <div class="mb-2">สถานะ: <span class="badge bg-info">@p.Status</span></div>
+                <div class="mb-2 d-flex align-items-center">
+                    @{ var avg = (p.Ratings != null && p.Ratings.Any()) ? p.Ratings.Average(r => r.Stars) : 0; }
+                    @{ int full = (int)Math.Round(avg); }
+                    <span class="me-2">เรทติ้ง:</span>
+                    <span>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= full ? "bi-star-fill text-warning" : "bi-star")"></i>
+                        }
+                    </span>
+                    <span class="ms-2 badge bg-success">@avg.ToString("0.0")/5</span>
+                    <a class="ms-2" asp-controller="Ratings" asp-action="Product" asp-route-productId="@p.Id">ดูรีวิว</a>
+                </div>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@p.Id">แก้ไข</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@p.Id">ลบ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+</div>

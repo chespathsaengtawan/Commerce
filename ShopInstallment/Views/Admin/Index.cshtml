@@ -1,0 +1,296 @@
+@model ShopInstallment.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+            <p class="text-muted mb-0">ภาพรวมระบบทั้งหมด</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/Admin/Payments" class="btn btn-outline-primary"><i class="bi bi-credit-card"></i> การชำระเงิน</a>
+            <a asp-controller="Orders" asp-action="AdminIndex" class="btn btn-outline-secondary"><i class="bi bi-cart-check"></i> คำสั่งซื้อ</a>
+        </div>
+    </div>
+
+    <!-- Top metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">ผู้ใช้งานทั้งหมด</p>
+                    <h3 class="mb-0">@Model.TotalUsers</h3>
+                    <div class="text-muted small mt-1">Admin: @Model.AdminUsers | Seller: @Model.SellerUsers | ลูกค้า: @Model.CustomerUsers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">คำสั่งซื้อทั้งหมด</p>
+                    <h3 class="mb-0">@Model.TotalOrders</h3>
+                    <div class="text-muted small mt-1">Pending: @Model.PendingOrders | Completed: @Model.CompletedOrders</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">การชำระเงินทั้งหมด</p>
+                    <h3 class="mb-0">@Model.TotalPayments</h3>
+                    <div class="text-muted small mt-1">สำเร็จ: @Model.CompletedPayments | Escrow: @Model.EscrowHoldPayments</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">มูลค่าการชำระเงินรวม</p>
+                    <h3 class="mb-0 text-primary">฿@Model.TotalPaymentAmount.ToString("N2")</h3>
+                    <div class="text-muted small mt-1">Coin Balance รวม: ฿@Model.TotalCoinBalance.ToString("N2")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders & Payments summary -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-clipboard-data"></i> สถานะคำสั่งซื้อ</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <div class="text-muted">Pending</div>
+                            <h4>@Model.PendingOrders</h4>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-muted">Confirmed</div>
+                            <h4>@Model.ConfirmedOrders</h4>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-muted">Completed</div>
+                            <h4>@Model.CompletedOrders</h4>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-muted">Cancelled</div>
+                            <h4>@Model.CancelledOrders</h4>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <div class="text-muted">มูลค่ารวม</div>
+                        <div class="fw-bold">฿@Model.TotalOrderAmount.ToString("N2")</div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="text-muted">ชำระแล้ว</div>
+                        <div class="text-success fw-bold">฿@Model.TotalPaidAmount.ToString("N2")</div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="text-muted">คงเหลือ</div>
+                        <div class="@(Model.TotalRemainingAmount > 0 ? "text-danger" : "text-success") fw-bold">
+                            ฿@Model.TotalRemainingAmount.ToString("N2")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-cash-coin"></i> สถานะการชำระเงิน</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <div class="text-muted">สำเร็จ</div>
+                            <h4>@Model.CompletedPayments</h4>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-muted">Escrow Hold</div>
+                            <h4>@Model.EscrowHoldPayments</h4>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-muted">Escrow Frozen</div>
+                            <h4>@Model.EscrowFrozenPayments</h4>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-muted">ทั้งหมด</div>
+                            <h4>@Model.TotalPayments</h4>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <div class="text-muted">ยอดรวมการชำระเงิน</div>
+                        <div class="fw-bold">฿@Model.TotalPaymentAmount.ToString("N2")</div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="text-muted">ยอด Coin ทั้งระบบ</div>
+                        <div class="fw-bold">฿@Model.TotalCoinBalance.ToString("N2")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product & User overview -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-box-seam"></i> สินค้า</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="text-muted">ทั้งหมด</div>
+                            <h4>@Model.TotalProducts</h4>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Active</div>
+                            <h4>@Model.ActiveProducts</h4>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Inactive</div>
+                            <h4>@Model.InactiveProducts</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-people"></i> ผู้ใช้งาน</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="text-muted">Admin</div>
+                            <h4>@Model.AdminUsers</h4>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Seller</div>
+                            <h4>@Model.SellerUsers</h4>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">ลูกค้า</div>
+                            <h4>@Model.CustomerUsers</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent tables -->
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> คำสั่งซื้อล่าสุด</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>เลขที่</th>
+                                    <th>ผู้ซื้อ</th>
+                                    <th>มูลค่า</th>
+                                    <th>สถานะ</th>
+                                    <th>สร้างเมื่อ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentOrders.Any())
+                                {
+                                    @foreach (var order in Model.RecentOrders)
+                                    {
+                                        var statusBadge = order.Status switch
+                                        {
+                                            "Pending" => "badge bg-warning text-dark",
+                                            "Confirmed" => "badge bg-info",
+                                            "Completed" => "badge bg-success",
+                                            "Cancelled" => "badge bg-danger",
+                                            _ => "badge bg-secondary"
+                                        };
+                                        <tr>
+                                            <td><strong>#@order.OrderNumber</strong></td>
+                                            <td>@(order.Customer?.FirstName ?? "-")</td>
+                                            <td>฿@order.TotalAmount.ToString("N2")</td>
+                                            <td><span class="@statusBadge">@order.Status</span></td>
+                                            <td><small>@order.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")</small></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="5" class="text-center text-muted py-4">ไม่มีข้อมูล</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-currency-exchange"></i> การชำระเงินล่าสุด</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Transaction</th>
+                                    <th>ผู้ซื้อ</th>
+                                    <th>ผู้ขาย</th>
+                                    <th>จำนวน</th>
+                                    <th>สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentPayments.Any())
+                                {
+                                    @foreach (var payment in Model.RecentPayments)
+                                    {
+                                        var paymentStatusBadge = payment.Status switch
+                                        {
+                                            "Completed" => "badge bg-success",
+                                            "EscrowHold" => "badge bg-warning text-dark",
+                                            "EscrowReleased" => "badge bg-info",
+                                            "EscrowFrozen" => "badge bg-danger",
+                                            _ => "badge bg-secondary"
+                                        };
+                                        var seller = payment.Order?.OrderItems?.FirstOrDefault()?.Product?.Seller;
+                                        <tr>
+                                            <td><code>@payment.TransactionId?.Substring(0, Math.Min(10, payment.TransactionId.Length))</code></td>
+                                            <td>@(payment.Order?.Customer?.FirstName ?? "-")</td>
+                                            <td>@(seller?.FirstName ?? "-")</td>
+                                            <td>฿@payment.Amount.ToString("N2")</td>
+                                            <td><span class="@paymentStatusBadge">@payment.Status</span></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="5" class="text-center text-muted py-4">ไม่มีข้อมูล</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-hover tbody tr:hover { background: #f8f9fa; }
+</style>

@@ -1,0 +1,29 @@
+@model ShopInstallment.Models.ProductVariant
+@{
+    var product = (ShopInstallment.Models.Product)ViewBag.Product;
+    ViewData["Title"] = $"แก้ไขตัวเลือก: {product.Name}";
+}
+<h2>แก้ไขตัวเลือก: @product.Name</h2>
+<form asp-action="Edit" method="post" class="card p-3">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ProductId" />
+    <div class="mb-3">
+        <label asp-for="VariantName" class="form-label"></label>
+        <input asp-for="VariantName" class="form-control" />
+        <span asp-validation-for="VariantName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PriceAdjustment" class="form-label"></label>
+        <input asp-for="PriceAdjustment" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Stock" class="form-label"></label>
+        <input asp-for="Stock" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="SKU" class="form-label"></label>
+        <input asp-for="SKU" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">บันทึก</button>
+    <a class="btn btn-secondary" asp-action="Index" asp-route-productId="@product.Id">ย้อนกลับ</a>
+</form>

@@ -1,0 +1,220 @@
+@model IEnumerable<ShopInstallment.Models.Payment>
+@{
+    ViewData["Title"] = "จัดการการชำระเงิน";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cash-coin"></i> จัดการการชำระเงิน</h2>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="card-text text-white-50">ทั้งหมด</p>
+                            <h3 class="card-title mb-0">@Model.Count()</h3>
+                        </div>
+                        <i class="bi bi-cash-coin" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="card-text text-white-50">สำเร็จ</p>
+                            <h3 class="card-title mb-0">@Model.Count(p => p.Status == "Completed")</h3>
+                        </div>
+                        <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="card-text text-dark-50">รอตรวจสอบ</p>
+                            <h3 class="card-title mb-0">@Model.Count(p => p.Status == "EscrowHold")</h3>
+                        </div>
+                        <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="card-text text-white-50">ระงับ</p>
+                            <h3 class="card-title mb-0">@Model.Count(p => p.Status == "EscrowFrozen")</h3>
+                        </div>
+                        <i class="bi bi-lock" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-light">
+            <h6 class="mb-0"><i class="bi bi-table"></i> รายการการชำระเงิน</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 10%;">เลขที่ธุรกรรม</th>
+                            <th style="width: 12%;">คำสั่งซื้อ</th>
+                            <th style="width: 14%;">ผู้ซื้อ</th>
+                            <th style="width: 14%;">ผู้ขาย</th>
+                            <th style="width: 8%;">จำนวนเงิน</th>
+                            <th style="width: 8%;">วิธีการ</th>
+                            <th style="width: 10%;">สถานะ</th>
+                            <th style="width: 12%;">วันเวลา</th>
+                            <th style="width: 12%;">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.Any() == true)
+                        {
+                            @foreach (var payment in Model.OrderByDescending(p => p.PaymentDate))
+                            {
+                                <tr>
+                                    <td>
+                                        <code class="text-primary" style="font-size: 0.85rem;">
+                                            @payment.TransactionId.Substring(0, Math.Min(15, payment.TransactionId.Length))...
+                                        </code>
+                                    </td>
+                                    <td>
+                                        <strong>@payment.Order?.OrderNumber</strong>
+                                        <br />
+                                        <small class="text-muted">ID: @payment.OrderId</small>
+                                    </td>
+                                    <td>
+                                        <div><strong>@(payment.Order?.Customer?.FirstName ?? "-")</strong></div>
+                                        <small class="text-muted">@payment.Order?.Customer?.Email</small>
+                                    </td>
+                                    <td>
+                                        @{ var seller = payment.Order?.OrderItems?.FirstOrDefault()?.Product?.Seller; }
+                                        @if (seller != null)
+                                        {
+                                            <div><strong>@seller.FirstName</strong></div>
+                                            <small class="text-muted">@seller.Email</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">ไม่พบผู้ขาย</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <h6 class="mb-0">@payment.Amount.ToString("N2") ฿</h6>
+                                        <small class="text-muted">ค่าธรรมเนียม: @payment.FeeAmount.ToString("N2") ฿</small>
+                                    </td>
+                                    <td>
+                                        @if (payment.PaymentMethod == "Coin")
+                                        {
+                                            <span class="badge bg-info"><i class="bi bi-coin"></i> @payment.PaymentMethod</span>
+                                        }
+                                        else if (payment.PaymentMethod == "PromptPay")
+                                        {
+                                            <span class="badge bg-primary"><i class="bi bi-qr-code"></i> @payment.PaymentMethod</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@payment.PaymentMethod</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (payment.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> สำเร็จ</span>
+                                        }
+                                        else if (payment.Status == "EscrowHold")
+                                        {
+                                            <span class="badge bg-warning"><i class="bi bi-hourglass-split"></i> รอตรวจสอบ</span>
+                                        }
+                                        else if (payment.Status == "EscrowReleased")
+                                        {
+                                            <span class="badge bg-info"><i class="bi bi-unlock"></i> ปล่อยแล้ว</span>
+                                        }
+                                        else if (payment.Status == "EscrowFrozen")
+                                        {
+                                            <span class="badge bg-danger"><i class="bi bi-lock"></i> ระงับ</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <small>@payment.PaymentDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Details" asp-route-id="@payment.Id" 
+                                               class="btn btn-outline-primary" title="ดูรายละเอียด">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-controller="Orders" asp-action="Details" asp-route-id="@payment.OrderId" 
+                                               class="btn btn-outline-secondary" title="ดูคำสั่งซื้อ">
+                                                <i class="bi bi-receipt"></i>
+                                            </a>
+                                            @if (payment.Status == "EscrowHold")
+                                            {
+                                                <form asp-action="ReleaseEscrow" method="post" class="d-inline" 
+                                                      onsubmit="return confirm('ยืนยันการปล่อยเงินนี้?')">
+                                                    <input type="hidden" name="paymentId" value="@payment.Id" />
+                                                    <button type="submit" class="btn btn-outline-success" title="ปล่อยเงิน">
+                                                        <i class="bi bi-unlock"></i>
+                                                    </button>
+                                                </form>
+                                                <form asp-action="FreezeEscrow" method="post" class="d-inline"
+                                                      onsubmit="return confirm('ยืนยันการระงับเงินนี้?')">
+                                                    <input type="hidden" name="paymentId" value="@payment.Id" />
+                                                    <button type="submit" class="btn btn-outline-danger" title="ระงับเงิน">
+                                                        <i class="bi bi-lock"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mt-2">ยังไม่มีการชำระเงิน</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+</style>

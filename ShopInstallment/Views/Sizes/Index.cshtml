@@ -1,0 +1,92 @@
+@model IEnumerable<ShopInstallment.Models.Size>
+@{
+    ViewData["Title"] = "จัดการขนาด";
+    var categories = (List<ShopInstallment.Models.Category>)ViewBag.Categories;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-rulers"></i> จัดการขนาด</h2>
+    <a class="btn btn-primary" asp-action="Create">
+        <i class="bi bi-plus-circle"></i> เพิ่มขนาด
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ชื่อขนาด</th>
+                    <th>หมวดหมู่</th>
+                    <th>คำอธิบาย</th>
+                    <th>สถานะ</th>
+                    <th style="width: 150px;">จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model?.Any() == true)
+                {
+                    @foreach (var item in Model)
+                    {
+                        var category = categories?.FirstOrDefault(c => c.Id == item.CategoryId);
+                        <tr>
+                            <td>
+                                <strong>@item.Name</strong>
+                            </td>
+                            <td>
+                                @if (item.CategoryId.HasValue && category != null)
+                                {
+                                    <span class="badge bg-info">@category.Name</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <small>@item.Description</small>
+                            </td>
+                            <td>
+                                @if (item.Status == "Active")
+                                {
+                                    <span class="badge bg-success">ใช้งาน</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">ไม่ใช้งาน</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('ต้องการลบขนาดนี้?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox"></i> ยังไม่มีขนาด
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+@model ShopInstallment.Models.Product
+@{
+    ViewData["Title"] = "แก้ไขสินค้า";
+}
+<h2>แก้ไขสินค้า</h2>
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="card p-3">
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PricePerUnit" class="form-label"></label>
+                <input asp-for="PricePerUnit" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="RentPricePerDay" class="form-label"></label>
+                <input asp-for="RentPricePerDay" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Stock" class="form-label"></label>
+                <input asp-for="Stock" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" class="form-select">
+                    <option>Active</option>
+                    <option>Inactive</option>
+                    <option>OutOfStock</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">หมวดหมู่</label>
+                <select asp-for="CategoryId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Category>)ViewBag.Categories, nameof(ShopInstallment.Models.Category.Id), nameof(ShopInstallment.Models.Category.Name))"></select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">แบรนด์</label>
+                <select asp-for="BrandId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Brand>)ViewBag.Brands, nameof(ShopInstallment.Models.Brand.Id), nameof(ShopInstallment.Models.Brand.Name))"></select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">สี</label>
+                <select asp-for="ColorId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Color>)ViewBag.Colors, nameof(ShopInstallment.Models.Color.Id), nameof(ShopInstallment.Models.Color.Name))"></select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">ขนาด</label>
+                <select asp-for="SizeId" class="form-select" asp-items="new SelectList((IEnumerable<ShopInstallment.Models.Size>)ViewBag.Sizes, nameof(ShopInstallment.Models.Size.Id), nameof(ShopInstallment.Models.Size.Name))"></select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">เพิ่มรูปใหม่ (เพิ่มได้จนถึงรวมสูงสุด 5 รูป)</label>
+                <input type="file" name="images" multiple class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">ตั้งรูปหลักตามลำดับ</label>
+                <input type="number" name="mainIndex" class="form-control" min="0" value="0" />
+            </div>
+            <div class="row">
+                @if (Model.Images != null)
+                {
+                    var ordered = Model.Images.OrderBy(x => x.DisplayOrder).ToList();
+                    for (int i = 0; i < ordered.Count; i++)
+                    {
+                        var img = ordered[i];
+                        <div class="col-4 text-center mb-3">
+                            <img src="@img.ImageUrl" class="img-fluid rounded" />
+                            <div class="mt-1">
+                                <span class="badge @(img.IsMain ? "bg-success" : "bg-secondary")">@(img.IsMain ? "Main" : "")</span>
+                            </div>
+                            <form asp-action="DeleteImage" method="post" class="mt-1">
+                                <input type="hidden" name="id" value="@img.Id" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit">ลบรูป</button>
+                            </form>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">บันทึก</button>
+        <a asp-action="Index" class="btn btn-secondary">ย้อนกลับ</a>
+    </div>
+</form>

@@ -1,0 +1,47 @@
+@model IEnumerable<ShopInstallment.Models.ProductRating>
+@{
+    var product = (ShopInstallment.Models.Product)ViewBag.Product;
+    var avg = (double)ViewBag.Average;
+    ViewData["Title"] = $"รีวิว: {product.Name}";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>รีวิวสินค้า: @product.Name</h3>
+    <a class="btn btn-primary" asp-action="Create" asp-route-productId="@product.Id">เขียนรีวิว</a>
+</div>
+<div class="mb-3 d-flex align-items-center">
+    <span class="me-2">คะแนนเฉลี่ย:</span>
+    <div>
+        @{ int full = (int)Math.Round(avg); }
+        @for (int i = 1; i <= 5; i++)
+        {
+            <i class="bi @(i <= full ? "bi-star-fill text-warning" : "bi-star")"></i>
+        }
+        <span class="ms-2 badge bg-success">@avg.ToString("0.0")/5</span>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">ยังไม่มีรีวิว</div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var r in Model)
+        {
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <strong>@r.UserId</strong>
+                    <span>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= r.Stars ? "bi-star-fill text-warning" : "bi-star")"></i>
+                        }
+                    </span>
+                </div>
+                <div class="text-muted">@r.CreatedAt.ToLocalTime()</div>
+                <div>@r.Review</div>
+            </div>
+        }
+    </div>
+}

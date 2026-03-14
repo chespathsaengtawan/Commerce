@@ -1,0 +1,139 @@
+@{
+    ViewData["Title"] = "เติมเงิน Coin";
+}
+
+<h2><i class="bi bi-plus-circle"></i> เติมเงิน Coin</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="TopUp" method="post">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">จำนวนเงินที่ต้องการเติม (Coin)</label>
+                        <input type="number" class="form-control form-control-lg" id="amount" name="amount" 
+                               step="0.01" min="1" required placeholder="0.00" />
+                        <div class="form-text">ขั้นต่ำ 1 Coin</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">เลือกช่องทางการชำระเงิน</label>
+                        <div class="d-grid gap-2">
+                            <div class="form-check card">
+                                <div class="card-body">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pm1" 
+                                           value="PromptPay" checked />
+                                    <label class="form-check-label" for="pm1">
+                                        <i class="bi bi-qr-code"></i> PromptPay
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-check card">
+                                <div class="card-body">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pm2" 
+                                           value="BillPayment" />
+                                    <label class="form-check-label" for="pm2">
+                                        <i class="bi bi-receipt"></i> Bill Payment
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-check card">
+                                <div class="card-body">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pm3" 
+                                           value="TrueWallet" />
+                                    <label class="form-check-label" for="pm3">
+                                        <i class="bi bi-wallet2"></i> True Wallet
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-check card">
+                                <div class="card-body">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pm4" 
+                                           value="BankTransfer" />
+                                    <label class="form-check-label" for="pm4">
+                                        <i class="bi bi-bank"></i> โอนผ่านธนาคาร
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-check card">
+                                <div class="card-body">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="pm5" 
+                                           value="CreditCard" />
+                                    <label class="form-check-label" for="pm5">
+                                        <i class="bi bi-credit-card"></i> บัตรเครดิต/เดบิต
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>หมายเหตุ:</strong> 
+                        <ul class="mb-0 mt-2">
+                            <li>1 Coin = 1 บาท</li>
+                            <li>การเติมเงินจะมีผลทันที</li>
+                            <li>Coin ไม่มีวันหมดอายุ</li>
+                            <li>สามารถใช้ชำระสินค้าได้ทันที</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> ยืนยันการเติมเงิน
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> ย้อนกลับ
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-tags"></i> แพ็คเกจแนะนำ</h6>
+                <div class="row g-2">
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-primary w-100" onclick="setAmount(100)">
+                            100 Coin
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-primary w-100" onclick="setAmount(500)">
+                            500 Coin
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-primary w-100" onclick="setAmount(1000)">
+                            1,000 Coin
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-primary w-100" onclick="setAmount(2000)">
+                            2,000 Coin
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-primary w-100" onclick="setAmount(5000)">
+                            5,000 Coin
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-primary w-100" onclick="setAmount(10000)">
+                            10,000 Coin
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function setAmount(amount) {
+            document.getElementById('amount').value = amount;
+        }
+    </script>
+}

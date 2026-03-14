@@ -1,0 +1,147 @@
+@{
+    ViewData["Title"] = "เปิดร้านค้า - สมัครเป็นผู้ขาย";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient text-white text-center py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h2 class="mb-0">
+                        <i class="bi bi-shop-window"></i> เปิดร้านค้ากับเรา
+                    </h2>
+                    <p class="mb-0 mt-2">เริ่มต้นธุรกิจออนไลน์ของคุณวันนี้</p>
+                </div>
+
+                <div class="card-body p-5">
+                    <!-- ข้อมูลความสำเร็จ -->
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle"></i> @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- ประโยชน์ของการเป็นผู้ขาย -->
+                    <div class="mb-4">
+                        <h4 class="text-primary mb-3">
+                            <i class="bi bi-star-fill"></i> ประโยชน์ของการเป็นผู้ขาย
+                        </h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i> 
+                                <strong>เพิ่มสินค้าได้ไม่จำกัด</strong> - อัพโหลดสินค้าของคุณและเริ่มขายได้ทันที
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i> 
+                                <strong>รับเงินรวดเร็ว</strong> - ระบบโอนเงินอัตโนมัติหลังลูกค้าได้รับสินค้า
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i> 
+                                <strong>จัดการคำสั่งซื้อง่าย</strong> - ระบบจัดการออเดอร์ที่ใช้งานง่าย
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i> 
+                                <strong>ตั้งค่าการชำระเงินเอง</strong> - รองรับหลายช่องทาง PromptPay, QR, Coin
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i> 
+                                <strong>ไม่มีค่าสมัคร</strong> - เริ่มต้นฟรี เก็บค่าธรรมเนียมเมื่อขายได้เท่านั้น
+                            </li>
+                        </ul>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- ข้อตกลงและเงื่อนไข -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">
+                            <i class="bi bi-file-earmark-text"></i> ข้อตกลงและเงื่อนไข
+                        </h5>
+                        <div class="border rounded p-3 bg-light" style="max-height: 200px; overflow-y: auto;">
+                            <ol class="small">
+                                <li>ผู้ขายต้องรับผิดชอบในสินค้าที่จำหน่าย รวมถึงคุณภาพและความถูกต้องของข้อมูล</li>
+                                <li>สินค้าต้องไม่ผิดกฎหมาย ไม่ละเมิดลิขสิทธิ์ และไม่เป็นสิ่งของต้องห้าม</li>
+                                <li>ผู้ขายต้องจัดส่งสินค้าภายในระยะเวลาที่กำหนด</li>
+                                <li>ระบบจะหักค่าธรรมเนียม 3-5% จากยอดขายแต่ละรายการ</li>
+                                <li>ผู้ขายต้องตอบคำถามและร้องเรียนจากลูกค้าอย่างรวดเร็ว</li>
+                                <li>หากพบการละเมิดเงื่อนไข ทางเว็บไซต์ขอสงวนสิทธิ์ระงับหรือยกเลิกบัญชี</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- ฟอร์มยืนยันการสมัคร -->
+                    <form asp-action="BecomeSeller" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" name="agreement" value="accepted" id="agreementCheck" required>
+                            <label class="form-check-label" for="agreementCheck">
+                                <strong>ฉันได้อ่านและยอมรับข้อตกลงและเงื่อนไขทั้งหมด</strong>
+                            </label>
+                        </div>
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> ยืนยันการสมัครเป็นผู้ขาย
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> ยกเลิก
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- ข้อมูลติดต่อ -->
+                    <div class="mt-4 text-center">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> 
+                            มีคำถาม? ติดต่อเรา: <a href="mailto:support@99bahtshop.com">support@99bahtshop.com</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- การ์ดเพิ่มเติม: เริ่มต้นอย่างไร -->
+            <div class="card mt-4 border-0 shadow">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">
+                        <i class="bi bi-lightbulb"></i> เริ่มต้นอย่างไรหลังสมัคร?
+                    </h5>
+                    <ol class="mb-0">
+                        <li class="mb-2"><strong>เพิ่มสินค้า</strong> - ไปที่เมนู "ผู้ขาย" > "จัดการสินค้า"</li>
+                        <li class="mb-2"><strong>ตั้งค่าการชำระเงิน</strong> - กำหนดช่องทางรับเงินและค่าธรรมเนียม</li>
+                        <li class="mb-2"><strong>รอคำสั่งซื้อ</strong> - ระบบจะแจ้งเตือนเมื่อมีออเดอร์เข้ามา</li>
+                        <li><strong>จัดส่งและรับเงิน</strong> - จัดส่งสินค้าและรับเงินเข้ากระเป๋าอัตโนมัติ</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>

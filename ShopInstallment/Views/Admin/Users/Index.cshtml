@@ -1,0 +1,197 @@
+@model ShopInstallment.ViewModels.AdminUserListViewModel
+@{
+    ViewData["Title"] = "จัดการผู้ใช้งาน";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-people"></i> จัดการผู้ใช้งาน</h2>
+            <p class="text-muted mb-0">เฉพาะผู้ดูแลระบบสามารถมองเห็นและจัดการได้</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">ผู้ใช้งานทั้งหมด</p>
+                    <h3 class="mb-0">@Model.TotalUsers</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">ผู้ดูแลระบบ</p>
+                    <h3 class="mb-0 text-primary">@Model.AdminUsers</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">ผู้ขาย</p>
+                    <h3 class="mb-0 text-success">@Model.SellerUsers</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">ลูกค้า</p>
+                    <h3 class="mb-0 text-secondary">@Model.CustomerUsers</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="bi bi-table"></i> รายชื่อผู้ใช้งาน</h6>
+            <small class="text-muted">เรียงจากสมัครล่าสุด</small>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 20%;">ชื่อ</th>
+                            <th style="width: 22%;">อีเมล</th>
+                            <th style="width: 18%;">บทบาท</th>
+                            <th style="width: 15%;">สถานะ</th>
+                            <th style="width: 15%;">สร้างเมื่อ</th>
+                            <th style="width: 10%;">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Users.Any())
+                        {
+                            @foreach (var user in Model.Users)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold">@(string.IsNullOrWhiteSpace(user.DisplayName) ? "-" : user.DisplayName)</div>
+                                    </td>
+                                    <td>
+                                        <div>@user.Email</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @if (user.IsAdmin)
+                                            {
+                                                <span class="badge bg-dark"><i class="bi bi-shield-lock"></i> Admin</span>
+                                            }
+                                            @if (user.IsSeller)
+                                            {
+                                                <span class="badge bg-success"><i class="bi bi-shop"></i> Seller</span>
+                                            }
+                                            @if (!user.IsAdmin && !user.IsSeller)
+                                            {
+                                                <span class="badge bg-secondary">Customer</span>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (user.IsLockedOut)
+                                        {
+                                            <span class="badge bg-danger"><i class="bi bi-lock-fill"></i> ถูกระงับ</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-unlock"></i> ใช้งานได้</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">@user.CreatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                    </td>
+                                    <td>
+                                        @if (user.IsAdmin)
+                                        {
+                                            <span class="text-muted small">Admin</span>
+                                        }
+                                        else
+                                        {
+                                            <div class="btn-group btn-group-sm gap-2" role="group">
+                                                @if (user.IsSeller)
+                                                {
+                                                    <form asp-controller="AdminUsers" asp-action="RemoveSeller" method="post" class="d-inline" onsubmit="return confirm('ยืนยันการลบสิทธิ์ผู้ขาย?');">
+                                                        <input type="hidden" name="id" value="@user.Id" />
+                                                        <button type="submit" class="btn btn-outline-danger" title="ลบสิทธิ์ผู้ขาย">
+                                                            <i class="bi bi-x-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-controller="AdminUsers" asp-action="AddSeller" method="post" class="d-inline" onsubmit="return confirm('ยืนยันการเพิ่มสิทธิ์ผู้ขาย?');">
+                                                        <input type="hidden" name="id" value="@user.Id" />
+                                                        <button type="submit" class="btn btn-outline-success" title="เพิ่มเป็นผู้ขาย">
+                                                            <i class="bi bi-shop"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+
+                                                @if (user.IsLockedOut)
+                                                {
+                                                    <form asp-controller="AdminUsers" asp-action="Unlock" method="post" class="d-inline" onsubmit="return confirm('ปลดล็อกบัญชีนี้?');">
+                                                        <input type="hidden" name="id" value="@user.Id" />
+                                                        <button type="submit" class="btn btn-outline-primary" title="ปลดล็อก">
+                                                            <i class="bi bi-unlock"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-controller="AdminUsers" asp-action="Lock" method="post" class="d-inline" onsubmit="return confirm('ระงับบัญชีนี้?');">
+                                                        <input type="hidden" name="id" value="@user.Id" />
+                                                        <button type="submit" class="btn btn-outline-warning" title="ระงับบัญชี">
+                                                            <i class="bi bi-lock"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox" style="font-size: 1.6rem;"></i>
+                                    <div>ยังไม่มีผู้ใช้งาน</div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-hover tbody tr:hover { background: #f8f9fa; }
+</style>

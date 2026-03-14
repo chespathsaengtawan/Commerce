@@ -1,0 +1,118 @@
+@model ShopInstallment.Models.CoinWallet
+@{
+    ViewData["Title"] = "กระเป๋าเงิน Coin";
+    var recentTransactions = (List<ShopInstallment.Models.CoinTransaction>)ViewBag.RecentTransactions;
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<h2><i class="bi bi-wallet2"></i> กระเป๋าเงิน Coin</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card border-primary mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title text-muted">ยอดคงเหลือ</h5>
+                <h1 class="display-3 text-primary">
+                    <i class="bi bi-coin"></i> @Model.Balance.ToString("N2")
+                </h1>
+                <p class="text-muted">Coin</p>
+                <p class="small text-muted">อัพเดทล่าสุด: @Model.UpdatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+                <div class="d-grid gap-2 mt-3">
+                    <a asp-action="TopUp" class="btn btn-success btn-lg">
+                        <i class="bi bi-plus-circle"></i> เติมเงิน
+                    </a>
+                    <a asp-action="History" class="btn btn-outline-primary">
+                        <i class="bi bi-clock-history"></i> ประวัติทั้งหมด
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-info-circle"></i> ข้อมูลการใช้งาน Coin</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> ใช้จ่ายสะดวกรวดเร็ว</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> ค่าธรรมเนียมต่ำ</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> สามารถคืนเงินได้</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> ปลอดภัยด้วยระบบรักษาความปลอดภัย</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> ธุรกรรมล่าสุด</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (recentTransactions?.Any() == true)
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var t in recentTransactions)
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div>
+                                        @if (t.Type == "TopUp")
+                                        {
+                                            <h6 class="mb-1 text-success">
+                                                <i class="bi bi-plus-circle"></i> เติมเงิน
+                                            </h6>
+                                        }
+                                        else if (t.Type == "Spend")
+                                        {
+                                            <h6 class="mb-1 text-danger">
+                                                <i class="bi bi-dash-circle"></i> ใช้จ่าย
+                                            </h6>
+                                        }
+                                        else if (t.Type == "Refund")
+                                        {
+                                            <h6 class="mb-1 text-info">
+                                                <i class="bi bi-arrow-counterclockwise"></i> คืนเงิน
+                                            </h6>
+                                        }
+                                        <p class="mb-1 small text-muted">@t.Reference</p>
+                                    </div>
+                                    <div class="text-end">
+                                        @if (t.Amount >= 0)
+                                        {
+                                            <span class="badge bg-success fs-6">+@t.Amount.ToString("N2")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger fs-6">@t.Amount.ToString("N2")</span>
+                                        }
+                                        <small class="d-block text-muted mt-1">
+                                            @t.CreatedAt.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer text-center">
+                        <a asp-action="History" class="btn btn-sm btn-outline-primary">
+                            ดูทั้งหมด <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-inbox display-4"></i>
+                        <p class="mt-2">ยังไม่มีธุรกรรม</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

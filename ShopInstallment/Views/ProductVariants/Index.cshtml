@@ -1,0 +1,35 @@
+@model IEnumerable<ShopInstallment.Models.ProductVariant>
+@{
+    var product = (ShopInstallment.Models.Product)ViewBag.Product;
+    ViewData["Title"] = $"ตัวเลือกสินค้า: {product.Name}";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>ตัวเลือกสินค้า: @product.Name</h2>
+    <a class="btn btn-primary" asp-action="Create" asp-route-productId="@product.Id">เพิ่มตัวเลือก</a>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ชื่อตัวเลือก</th>
+            <th>ปรับราคา</th>
+            <th>สต็อก</th>
+            <th>SKU</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var v in Model)
+    {
+        <tr>
+            <td>@v.VariantName</td>
+            <td>@v.PriceAdjustment.ToString("N2")</td>
+            <td>@v.Stock</td>
+            <td>@v.SKU</td>
+            <td class="text-end">
+                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@v.Id">แก้ไข</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@v.Id">ลบ</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

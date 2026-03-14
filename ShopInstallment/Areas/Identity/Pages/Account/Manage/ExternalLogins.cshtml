@@ -1,0 +1,105 @@
+﻿@page
+@model ExternalLoginsModel
+@{
+    ViewData["Title"] = "Manage your external logins";
+    ViewData["ActivePage"] = ManageNavPages.ExternalLogins;
+}
+<style>
+.btn-social {
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: #333;
+    font-weight: 500;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s;
+    margin: 8px 0;
+}
+.btn-social:hover {
+    border-color: #3F52E3;
+    background: #f8f9ff;
+    transform: translateY(-2px);
+}
+.btn-google {
+    background: rgb(255, 147, 126);
+    color: white;
+    border: none;
+}
+.btn-google:hover {
+    background: rgb(255, 127, 106);
+    color: white;
+}
+.btn-facebook {
+    background: #3F52E3;
+    color: white;
+    border: none;
+}
+.btn-facebook:hover {
+    background: #2F42D3;
+    color: white;
+}
+</style>
+<partial name="_StatusMessage" for="StatusMessage" />
+@if (Model.CurrentLogins?.Count > 0)
+{
+    <h3>ลงทะเบียนเข้าสู่ระบบ</h3>
+    <table class="table">
+        <tbody>
+            @foreach (var login in Model.CurrentLogins)
+            {
+                <tr>
+                    <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
+                    <td>
+                        @if (Model.ShowRemoveButton)
+                        {
+                            <form id="@($"remove-login-{login.LoginProvider}")" asp-page-handler="RemoveLogin" method="post">
+                                <div>
+                                    <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
+                                    <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
+                                    <button type="submit" class="btn btn-primary" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            @: &nbsp;
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<br />
+@if (Model.OtherLogins?.Count > 0)
+{
+    <h4>เพิ่มบริการอื่นเพื่อเข้าสู่ระบบ</h4>
+    <hr />
+    <form id="link-login-form" asp-page-handler="LinkLogin" method="post" class="form-horizontal">
+        <div id="socialLoginList">
+            <p>
+                @foreach (var provider in Model.OtherLogins)
+                {
+                    @if (provider.Name == "Google")
+                    {
+                        <button type="submit" class="btn btn-google btn-social" name="provider" value="@provider.Name" title="เข้าสู่ระบบด้วย @provider.DisplayName">
+                            <i class="bi bi-google"></i> เข้าสู่ระบบด้วย Google
+                        </button>
+                    }
+                    else if (provider.Name == "Facebook")
+                    {
+                        <button type="submit" class="btn btn-facebook btn-social" name="provider" value="@provider.Name" title="เข้าสู่ระบบด้วย @provider.DisplayName">
+                            <i class="bi bi-facebook"></i> เข้าสู่ระบบด้วย Facebook
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-social" name="provider" value="@provider.Name" title="เข้าสู่ระบบด้วย @provider.DisplayName">
+                            <i class="bi bi-box-arrow-in-right"></i> เข้าสู่ระบบด้วย @provider.DisplayName
+                        </button>
+                    }
+                }
+            </p>
+        </div>
+    </form>
+}
