@@ -1,3 +1,33 @@
+/* /Views/Home/index.cshtml.rz.scp.css */
+.hero-section[b-qcl1demhzl] {
+    background-image : url('/images/A1.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.mens-fashion[b-qcl1demhzl] {
+    background-image: url('/images/A2.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.kids-fashion[b-qcl1demhzl] {
+    background-image: url('/images/A3.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.cosmetics[b-qcl1demhzl] {
+    background-image: url('/images/A4.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.accessories[b-qcl1demhzl] {
+    background-image: url('/images/A5.jpg');
+    background-size: cover;
+    background-position: center;
+}
 /* /Views/Shared/_Layout.cshtml.rz.scp.css */
 /* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
@@ -20,7 +50,7 @@ a[b-0l85oohtvr] {
 
 .nav-pills .nav-link.active[b-0l85oohtvr], .nav-pills .show > .nav-link[b-0l85oohtvr] {
   color: #fff;
-  background-color: #1b6ec2;
+  background-color: rgba(0, 0, 0, .05);
   border-color: #1861ac;
 }
 

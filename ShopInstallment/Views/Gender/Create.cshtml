@@ -1,0 +1,16 @@
+@model ShopInstallment.Models.Gender;
+@{
+    ViewData["Title"] = "เพิ่มเพศสภาพ";
+}
+
+<h2>เพิ่มเพศสภาพ</h2>
+<form asp-action="Create" method="post" class="card p-3">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">บันทึก</button>
+    <a asp-action="Index" class="btn btn-secondary">ย้อนกลับ</a>
+</form>
+

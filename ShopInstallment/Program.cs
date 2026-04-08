@@ -18,7 +18,7 @@ namespace ShopInstallment
             // แก้ไข logging configuration เพื่อหลีกเลี่ยง bug ใน .NET 9
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
-            builder.Logging.AddDebug();
+            // ลบ AddDebug() เพราะเป็นสาเหตุของ InvalidCastException ใน .NET 9
             builder.Logging.SetMinimumLevel(LogLevel.Warning);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>

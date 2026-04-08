@@ -4,12 +4,13 @@
 }
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>หมวดหมู่สินค้า</h2>
-    <a class="btn btn-primary" asp-action="Create">เพิ่มหมวดหมู่</a>
+    <a class="btn btn-outline-primary" asp-action="Create"> <i class="bi bi-plus-circle"></i> เพิ่มหมวดหมู่</a>
 </div>
 <table class="table table-striped">
     <thead>
         <tr>
             <th>ชื่อ</th>
+            <th>เพศสภาพ</th>
             <th>สถานะ</th>
             <th>อัพเดท</th>
             <th></th>
@@ -20,11 +21,14 @@
     {
         <tr>
             <td>@item.Name</td>
+            <td>@item.Gender?.Name</td>
             <td>@item.Status</td>
             <td>@item.UpdatedAt?.ToLocalTime()</td>
             <td class="text-end">
-                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">แก้ไข</a>
-                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">ลบ</a>
+                <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id">
+                    <i class="bi bi-pencil"></i> แก้ไข</a>
+                <a class="btn btn-sm btn-outline-danger delete-button" asp-action="Delete" asp-route-id="@item.Id">
+                    <i class="bi bi-trash"></i> ลบ</a>
             </td>
         </tr>
     }

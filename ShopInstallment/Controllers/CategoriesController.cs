@@ -14,19 +14,36 @@ namespace ShopInstallment.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var items = await _context.Categories.OrderByDescending(c => c.CreatedAt).ToListAsync();
+            var items = await _context.Categories.Include(c => c.Gender).OrderByDescending(c => c.CreatedAt).ToListAsync();
+
+            ViewBag.Genders = await _context.Genders.ToListAsync();
             return View(items);
         }
 
-        public IActionResult Create() => View(new Category());
+        public async Task<IActionResult> Create()
+        {
+            ViewBag.Genders = await _context.Genders.ToListAsync();
+            return View(new Category());
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Category model)
         {
-            if (!ModelState.IsValid) return View(model);
+            // ลบ navigation properties validation
+            ModelState.Remove("Gender");
+            ModelState.Remove("Products");
+            
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ";
+                ViewBag.Genders = await _context.Genders.ToListAsync();
+                return View(model);
+            }
+            
             _context.Categories.Add(model);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "เพิ่มหมวดหมู่สำเร็จ";
             return RedirectToAction(nameof(Index));
         }
 
@@ -34,6 +51,7 @@ namespace ShopInstallment.Controllers
         {
             var item = await _context.Categories.FindAsync(id);
             if (item == null) return NotFound();
+            ViewBag.Genders = await _context.Genders.ToListAsync();
             return View(item);
         }
 
@@ -42,9 +60,33 @@ namespace ShopInstallment.Controllers
         public async Task<IActionResult> Edit(int id, Category model)
         {
             if (id != model.Id) return BadRequest();
-            if (!ModelState.IsValid) return View(model);
-            _context.Update(model);
+            
+            // ลบ Gender validation error ออก เพราะ navigation property ไม่ได้มาจาก form
+            ModelState.Remove("Gender");
+            ModelState.Remove("Products");
+            
+            model.UpdatedAt = DateTime.UtcNow;
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ";
+
+                ViewBag.Genders = await _context.Genders.ToListAsync();
+                return View(model);
+            }
+
+            // ดึง entity จาก database และ update เฉพาะ property ที่ต้องการ
+            var item = await _context.Categories.FindAsync(id);
+            if (item == null) return NotFound();
+
+            item.Name = model.Name;
+            item.Description = model.Description;
+            item.Status = model.Status;
+            item.GenderId = model.GenderId;
+            item.UpdatedAt = model.UpdatedAt;
+
+            // EF Core จะ track changes อัตโนมัติ ไม่ต้อง Update() หรือ Entry().State
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "แก้ไขหมวดหมู่สำเร็จ";
             return RedirectToAction(nameof(Index));
         }
 
@@ -54,6 +96,7 @@ namespace ShopInstallment.Controllers
             if (item == null) return NotFound();
             _context.Categories.Remove(item);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "ลบหมวดหมู่สำเร็จ";
             return RedirectToAction(nameof(Index));
         }
 

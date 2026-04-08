@@ -266,8 +266,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29sb3JzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/MAUI/Commerce/ShopInstallment/Views/Home/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+[D:/MAUI/Commerce/ShopInstallment/Views/Gender/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VuZGVyXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MAUI/Commerce/ShopInstallment/Views/Gender/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VuZGVyXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MAUI/Commerce/ShopInstallment/Views/Gender/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VuZGVyXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/MAUI/Commerce/ShopInstallment/Views/Home/Privacy.cshtml]
@@ -322,12 +330,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmF0aW5nc1xQcm9kdWN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/MAUI/Commerce/ShopInstallment/Views/SellerSettings/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VsbGVyU2V0dGluZ3NcRWRpdC5jc2h0bWw=
+[D:/MAUI/Commerce/ShopInstallment/Views/Seller/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VsbGVyXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/MAUI/Commerce/ShopInstallment/Views/SellerSettings/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VsbGVyU2V0dGluZ3NcSW5kZXguY3NodG1s
+[D:/MAUI/Commerce/ShopInstallment/Views/Seller/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VsbGVyXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MAUI/Commerce/ShopInstallment/Views/Seller/Setting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VsbGVyXFNldHRpbmcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/MAUI/Commerce/ShopInstallment/Views/Shared/Error.cshtml]
@@ -354,16 +366,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l6ZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/MAUI/Commerce/ShopInstallment/Views/Sizes/Wallet.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2l6ZXNcV2FsbGV0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/MAUI/Commerce/ShopInstallment/Views/Wallet/History.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2FsbGV0XEhpc3RvcnkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/MAUI/Commerce/ShopInstallment/Views/Wallet/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2FsbGV0XEluZGV4LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/MAUI/Commerce/ShopInstallment/Views/Wallet/SellerWallet.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2FsbGV0XFNlbGxlcldhbGxldC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/MAUI/Commerce/ShopInstallment/Views/Wallet/TopUp.cshtml]
@@ -377,6 +389,10 @@ build_metadata.AdditionalFiles.CssScope =
 [D:/MAUI/Commerce/ShopInstallment/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
+
+[D:/MAUI/Commerce/ShopInstallment/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = b-qcl1demhzl
 
 [D:/MAUI/Commerce/ShopInstallment/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s

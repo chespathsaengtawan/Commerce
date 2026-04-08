@@ -4,7 +4,7 @@
     var categories = (List<ShopInstallment.Models.Category>)ViewBag.Categories;
 }
 
-<h2><i class="bi bi-rulers"></i> เพิ่มขนาด</h2>
+<h2>เพิ่มขนาด</h2>
 
 <form asp-action="Create" method="post" class="card p-4 mt-3">
     @Html.AntiForgeryToken()
@@ -36,12 +36,12 @@
         </select>
     </div>
 
-    <div class="mt-4">
-        <button type="submit" class="btn btn-success">
+    <div class="d-flex justify-content-end gap-2">
+        <button type="submit" class="btn btn-outline-success">
             <i class="bi bi-check-circle"></i> บันทึก
         </button>
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> ยกเลิก
+        <a asp-action="Index" class="btn btn-outline-danger">
+            <i class="bi bi-arrow-left"></i> ย้อนกลับ
         </a>
     </div>
 </form>

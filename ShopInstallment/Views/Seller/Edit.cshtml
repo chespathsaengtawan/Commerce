@@ -1,0 +1,145 @@
+@model ShopInstallment.Models.SellerPaymentSetting
+@{
+    ViewData["Title"] = "แก้ไขการตั้งค่าการชำระเงิน";
+}
+
+<h2><i class="bi bi-pencil"></i> แก้ไขการตั้งค่าการชำระเงิน</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="SellerId" />
+
+            <div class="row g-4">
+                <!-- PromptPay -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <i class="bi bi-qr-code"></i> PromptPay
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="AllowPromptPay" id="allowPromptPay" />
+                                <label class="form-check-label" for="allowPromptPay">
+                                    เปิดรับการชำระผ่าน PromptPay
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="PromptPayFeePercent" class="form-label">ค่าธรรมเนียม (%)</label>
+                                <input asp-for="PromptPayFeePercent" class="form-control" step="0.01" min="0" max="100" />
+                                <span asp-validation-for="PromptPayFeePercent" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bill Payment -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <i class="bi bi-receipt"></i> Bill Payment
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="AllowBillPayment" id="allowBillPayment" />
+                                <label class="form-check-label" for="allowBillPayment">
+                                    เปิดรับการชำระผ่าน Bill Payment
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="BillPaymentFeePercent" class="form-label">ค่าธรรมเนียม (%)</label>
+                                <input asp-for="BillPaymentFeePercent" class="form-control" step="0.01" min="0" max="100" />
+                                <span asp-validation-for="BillPaymentFeePercent" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- True Wallet -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <i class="bi bi-wallet2"></i> True Wallet
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="AllowTrueWallet" id="allowTrueWallet" />
+                                <label class="form-check-label" for="allowTrueWallet">
+                                    เปิดรับการชำระผ่าน True Wallet
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="TrueWalletFeePercent" class="form-label">ค่าธรรมเนียม (%)</label>
+                                <input asp-for="TrueWalletFeePercent" class="form-control" step="0.01" min="0" max="100" />
+                                <span asp-validation-for="TrueWalletFeePercent" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bank Transfer -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <i class="bi bi-bank"></i> โอนผ่านธนาคาร
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="AllowBankTransfer" id="allowBankTransfer" />
+                                <label class="form-check-label" for="allowBankTransfer">
+                                    เปิดรับการโอนผ่านธนาคาร
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="BankTransferFeePercent" class="form-label">ค่าธรรมเนียม (%)</label>
+                                <input asp-for="BankTransferFeePercent" class="form-control" step="0.01" min="0" max="100" />
+                                <span asp-validation-for="BankTransferFeePercent" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coin -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <i class="bi bi-coin"></i> Coin ภายในระบบ
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="AllowCoin" id="allowCoin" />
+                                <label class="form-check-label" for="allowCoin">
+                                    เปิดรับการชำระด้วย Coin
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="CoinFeePercent" class="form-label">ค่าธรรมเนียม (%)</label>
+                                <input asp-for="CoinFeePercent" class="form-control" step="0.01" min="0" max="100" />
+                                <span asp-validation-for="CoinFeePercent" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warning mt-4" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> 
+                <strong>คำเตือน:</strong> การเปลี่ยนแปลงค่าธรรมเนียมจะมีผลกับคำสั่งซื้อใหม่เท่านั้น ไม่ส่งผลต่อคำสั่งซื้อที่มีอยู่แล้ว
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> บันทึกการตั้งค่า
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> ยกเลิก
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -6,7 +6,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1"><i class="bi bi-people"></i> จัดการผู้ใช้งาน</h2>
+            <h2 class="mb-1">ห จัดการผู้ใช้งาน</h2>
             <p class="text-muted mb-0">เฉพาะผู้ดูแลระบบสามารถมองเห็นและจัดการได้</p>
         </div>
         <div class="d-flex gap-2">
@@ -16,20 +16,7 @@
         </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
@@ -132,45 +119,33 @@
                                         }
                                         else
                                         {
-                                            <div class="btn-group btn-group-sm gap-2" role="group">
+                                            
                                                 @if (user.IsSeller)
                                                 {
-                                                    <form asp-controller="AdminUsers" asp-action="RemoveSeller" method="post" class="d-inline" onsubmit="return confirm('ยืนยันการลบสิทธิ์ผู้ขาย?');">
-                                                        <input type="hidden" name="id" value="@user.Id" />
-                                                        <button type="submit" class="btn btn-outline-danger" title="ลบสิทธิ์ผู้ขาย">
-                                                            <i class="bi bi-x-circle"></i>
-                                                        </button>
-                                                    </form>
+                                                    <a asp-controller="Users" asp-action="RemoveSeller" asp-route-id="@user.Id" class="btn btn-sm btn-outline-danger confirm-remove-seller" title="ลบสิทธิ์ผู้ขาย">
+                                                        <i class="bi bi-x-circle"></i>
+                                                    </a>
                                                 }
                                                 else
                                                 {
-                                                    <form asp-controller="AdminUsers" asp-action="AddSeller" method="post" class="d-inline" onsubmit="return confirm('ยืนยันการเพิ่มสิทธิ์ผู้ขาย?');">
-                                                        <input type="hidden" name="id" value="@user.Id" />
-                                                        <button type="submit" class="btn btn-outline-success" title="เพิ่มเป็นผู้ขาย">
-                                                            <i class="bi bi-shop"></i>
-                                                        </button>
-                                                    </form>
+                                                    <a asp-controller="Users" asp-action="AddSeller" asp-route-id="@user.Id" class="btn btn-sm btn-outline-success confirm-add-seller" title="เพิ่มเป็นผู้ขาย">
+                                                        <i class="bi bi-shop"></i>
+                                                    </a>
                                                 }
 
                                                 @if (user.IsLockedOut)
                                                 {
-                                                    <form asp-controller="AdminUsers" asp-action="Unlock" method="post" class="d-inline" onsubmit="return confirm('ปลดล็อกบัญชีนี้?');">
-                                                        <input type="hidden" name="id" value="@user.Id" />
-                                                        <button type="submit" class="btn btn-outline-primary" title="ปลดล็อก">
-                                                            <i class="bi bi-unlock"></i>
-                                                        </button>
-                                                    </form>
+                                                    <a asp-controller="Users" asp-action="Unlock" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary confirm-unlock" title="ปลดล็อก">
+                                                        <i class="bi bi-unlock"></i>
+                                                    </a>
                                                 }
                                                 else
                                                 {
-                                                    <form asp-controller="AdminUsers" asp-action="Lock" method="post" class="d-inline" onsubmit="return confirm('ระงับบัญชีนี้?');">
-                                                        <input type="hidden" name="id" value="@user.Id" />
-                                                        <button type="submit" class="btn btn-outline-warning" title="ระงับบัญชี">
-                                                            <i class="bi bi-lock"></i>
-                                                        </button>
-                                                    </form>
+                                                    <a asp-controller="Users" asp-action="Lock" asp-route-id="@user.Id" class="btn btn-sm btn-outline-warning confirm-lock" title="ระงับบัญชี">
+                                                        <i class="bi bi-lock"></i>
+                                                    </a>
                                                 }
-                                            </div>
+                                           
                                         }
                                     </td>
                                 </tr>
@@ -191,6 +166,94 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // ยืนยันการระงับบัญชี
+        document.querySelectorAll('.confirm-lock').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'ยืนยันการระงับบัญชี?',
+                    text: "ผู้ใช้งานจะไม่สามารถเข้าสู่ระบบได้",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ffc107',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'ใช่, ระงับเลย!',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = button.getAttribute('href');
+                    }
+                });
+            });
+        });
+
+        // ยืนยันการลบสิทธิ์ผู้ขาย
+        document.querySelectorAll('.confirm-remove-seller').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'ลบสิทธิ์ผู้ขาย?',
+                    text: "ผู้ใช้งานจะกลับเป็นลูกค้าทั่วไป",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'ใช่, ลบสิทธิ์!',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = button.getAttribute('href');
+                    }
+                });
+            });
+        });
+
+        // ยืนยันการเพิ่มสิทธิ์ผู้ขาย
+        document.querySelectorAll('.confirm-add-seller').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'เพิ่มสิทธิ์ผู้ขาย?',
+                    text: "ผู้ใช้งานจะสามารถขายสินค้าได้",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'ใช่, เพิ่มสิทธิ์!',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = button.getAttribute('href');
+                    }
+                });
+            });
+        });
+
+        // ยืนยันการปลดล็อก
+        document.querySelectorAll('.confirm-unlock').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'ปลดล็อกบัญชี?',
+                    text: "ผู้ใช้งานจะสามารถเข้าสู่ระบบได้อีกครั้ง",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#0d6efd',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'ใช่, ปลดล็อก!',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = button.getAttribute('href');
+                    }
+                });
+            });
+        });
+    </script>
+}
 
 <style>
 .table-hover tbody tr:hover { background: #f8f9fa; }

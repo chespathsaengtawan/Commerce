@@ -4,16 +4,29 @@
     var categories = (List<ShopInstallment.Models.Category>)ViewBag.Categories;
 }
 
+
 <!-- Hero Banner Section -->
 <div class="container-fluid px-0 mb-5">
-    <div class="row g-2">
+    <div class="row g-0">
+        <div class="col-12">
+            <div class="hero-banner position-relative" style="background-image: url('/images/hero-banner.jpg'); background-size: cover; background-position: center; height: 400px;">
+                <div class="overlay position-absolute top-0 start-0 end-0 bottom-0 bg-dark bg-opacity-50 d-flex flex-column justify-content-center align-items-center text-center text-white">
+                    <h1 class="display-4 fw-bold mb-3" style="font-family: 'Brush Script MT', cursive;">
+                        Welcome to 99Baht Shop
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4">
         <!-- Main Hero -->
         <div class="col-md-6">
-            <div class="hero-section bg-pastel-pink p-5 d-flex align-items-center" style="min-height: 400px;">
-                <div>
+            <div class="hero-section p-5 d-flex h-100" style="min-height: 720px;">
+                <div class="ms-auto my-auto col-md-6">
                     <h1 class="display-4 fw-bold mb-3" style="font-family: 'Brush Script MT', cursive; color: #333;">
-                        Women's Fashion
+                        Women's 
                     </h1>
+                    <h2>Fashion</h2>
                     <p class="lead text-muted mb-4">
                         Stylish, comfortable collection curated for the modern woman.
                     </p>
@@ -26,64 +39,62 @@
 
         <!-- Category Grid -->
         <div class="col-md-6">
-            <div class="row g-2 h-100">
+            <div class="row h-100 g-4">
                 <!-- Men's Fashion -->
-                <div class="col-6">
-                    <div class="category-card bg-pastel-mint h-100 p-4 d-flex flex-column justify-content-end" 
-                         style="cursor: pointer; transition: transform 0.3s;"
+                <div class="col-md-6">
+                    <div class="mens-fashion category-card p-2 d-flex justify-content-center align-items-center position-relative" 
+                         style="cursor: pointer; transition: transform 0.3s; "
                          onclick="location.href='@Url.Action("Index", "Products", new { categoryId = 1 })'">
-                        <h5>Men's fashion</h5>
-                        <small class="text-muted">150 Items</small>
-                        <a href="@Url.Action("Index", "Products")" class="btn btn-sm btn-outline-dark mt-2">
-                            SHOP NOW
-                        </a>
-                    </div>
+                        <span class="category-badge category-badge-bg category-badge-white">
+                           Men's fashion
+                        </span>
+                    </div>                 
                 </div>
 
                 <!-- Kids Fashion -->
-                <div class="col-6">
-                    <div class="category-card bg-pastel-lavender h-100 p-4 d-flex flex-column justify-content-end" 
-                         style="cursor: pointer; transition: transform 0.3s;">
-                        <h5>Kids' fashion</h5>
-                        <small class="text-muted">75 Items</small>
-                        <a href="@Url.Action("Index", "Products")" class="btn btn-sm btn-outline-dark mt-2">
-                            SHOP NOW
-                        </a>
+                <div class="col-md-6">
+                    <div class="kids-fashion category-card p-2 d-flex justify-content-center align-items-center position-relative" 
+                         style="cursor: pointer; transition: transform 0.3s; "
+                         onclick="location.href='@Url.Action("Index", "Products", new { categoryId = 2 })'">
+                        <span class="category-badge category-badge-bg category-badge-white">
+                            Kids' fashion
+                        </span>
                     </div>
                 </div>
-
+            
                 <!-- Cosmetics -->
-                <div class="col-6">
-                    <div class="category-card bg-pastel-peach h-100 p-4 d-flex flex-column justify-content-end">
-                        <h5>Cosmetics</h5>
-                        <small class="text-muted">40 Items</small>
-                        <a href="@Url.Action("Index", "Products")" class="btn btn-sm btn-outline-dark mt-2">
-                            SHOP NOW
-                        </a>
+                <div class="col-md-6">
+                    <div class="cosmetics category-card p-2 d-flex justify-content-center align-items-center position-relative" 
+                         style="cursor: pointer; transition: transform 0.3s; "
+                         onclick="location.href='@Url.Action("Index", "Products", new { categoryId = 3 })'">
+                        <span class="category-badge category-badge-bg category-badge-white">
+                            Cosmetics
+                        </span>
                     </div>
                 </div>
 
                 <!-- Accessories -->
-                <div class="col-6">
-                    <div class="category-card bg-pastel-blue h-100 p-4 d-flex flex-column justify-content-end">
-                        <h5>Accessories</h5>
-                        <small class="text-muted">120 Items</small>
-                        <a href="@Url.Action("Index", "Products")" class="btn btn-sm btn-outline-dark mt-2">
-                            SHOP NOW
-                        </a>
+                <div class="col-md-6">
+                    <div class="accessories category-card p-2 d-flex justify-content-center align-items-center position-relative" 
+                         style="cursor: pointer; transition: transform 0.3s; "
+                         onclick="location.href='@Url.Action("Index", "Products", new { categoryId = 4 })'">
+                        <span class="category-badge category-badge-bg category-badge-white">
+                            Accessories
+                        </span>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
 <!-- New Products Section -->
-<div class="container mb-5">
+<div class="container-fluid mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">
+        <h4 class="fw-bold">
             <i class="bi bi-star-fill" style="color: #FFB347;"></i> NEW PRODUCT
-        </h2>
+        </h4>
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-sm btn-outline-dark active">All</button>
             <button type="button" class="btn btn-sm btn-outline-dark">Women's</button>

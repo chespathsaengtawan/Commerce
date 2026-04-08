@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - ShopInstallment</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/pastel-theme.css" asp-append-version="true" />
@@ -13,7 +14,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">🛍️ 99Baht Shop</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -115,7 +116,7 @@
                                     <li><a class="dropdown-item" href="/Seller/Wallet">
                                         <i class="bi bi-cash-coin"></i> ศูนย์การเงิน
                                     </a></li>
-                                    <li><a class="dropdown-item" asp-controller="SellerSettings" asp-action="Index">
+                                    <li><a class="dropdown-item" asp-controller="/Seller" asp-action="Index">
                                         <i class="bi bi-gear"></i> ตั้งค่าการชำระเงิน
                                     </a></li>
                                 </ul>
@@ -186,7 +187,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -197,8 +198,89 @@
             &copy; 2025 - 99Baht Shop - ขาย เช่า ผ่อน ชุดสวมใส่ร่างกาย
         </div>
     </footer>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // สร้าง Toast ให้พร้อมใช้งานทันทีทั่วทั้งแอป
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+        window.Toast = Toast;
+
+        // Auto-show Toast สำหรับ TempData (ทุกหน้าใช้ได้เลย)
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Toast.fire({
+                icon: 'success',
+                title: '@TempData["SuccessMessage"]'
+            });
+            </text>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            Toast.fire({
+                icon: 'error',
+                title: '@TempData["ErrorMessage"]'
+            });
+            </text>
+        }
+
+        @if (TempData["InfoMessage"] != null)
+        {
+            <text>
+            Toast.fire({
+                icon: 'info',
+                title: '@TempData["InfoMessage"]'
+            });
+            </text>
+        }
+
+        @if (TempData["WarningMessage"] != null)
+        {
+            <text>
+            Toast.fire({
+                icon: 'warning',
+                title: '@TempData["WarningMessage"]'
+            });
+            </text>
+        }
+
+        // Delete Confirmation - ใช้ได้ทุกหน้าที่มี class="delete-button"
+        document.querySelectorAll('.delete-button').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'คุณแน่ใจหรือไม่?',
+                    text: "คุณจะไม่สามารถย้อนกลับได้!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'ใช่, ลบเลย!',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = button.getAttribute('href');
+                    }
+                });
+            });
+        });
+    </script>
+    
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

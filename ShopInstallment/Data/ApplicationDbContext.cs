@@ -30,6 +30,7 @@ namespace ShopInstallment.Data
         public DbSet<EscrowAccount> EscrowAccounts { get; set; }
         public DbSet<CoinWallet> CoinWallets { get; set; }
         public DbSet<CoinTransaction> CoinTransactions { get; set; }
+        public DbSet<Gender> Genders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -66,7 +67,6 @@ namespace ShopInstallment.Data
             // Limit images to 5 per product via check constraint (soft enforcement; server-side validation needed too)
             builder.Entity<ProductImage>()
                 .HasIndex(pi => new { pi.ProductId, pi.IsMain });
-
             // Note: Admin user and roles seeding moved to DbInitializer for better control
         }
     }

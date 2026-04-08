@@ -31,10 +31,25 @@ namespace ShopInstallment.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Size model)
         {
-            if (!ModelState.IsValid) return View(model);
-            _context.Sizes.Add(model);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid) { 
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ";
+                var categories = await _context.Categories.ToListAsync();
+                ViewBag.Categories = categories;
+                return View(model);
+            }
+            try
+            {
+               _context.Sizes.Add(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));             
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] =  ex.Message;
+                var categories = await _context.Categories.ToListAsync();
+                ViewBag.Categories = categories;
+                return View(model);
+            }
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -51,19 +66,45 @@ namespace ShopInstallment.Controllers
         public async Task<IActionResult> Edit(int id, Size model)
         {
             if (id != model.Id) return BadRequest();
-            if (!ModelState.IsValid) return View(model);
-            _context.Update(model);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid) { 
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ";
+                var categories = await _context.Categories.ToListAsync();
+                ViewBag.Categories = categories;
+                return View(model);
+            }
+
+            try
+            {
+                _context.Update(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));                
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] =  ex.Message;
+                var categories = await _context.Categories.ToListAsync();
+                ViewBag.Categories = categories;
+                return View(model);
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _context.Sizes.FindAsync(id);
-            if (item == null) return NotFound();
-            _context.Sizes.Remove(item);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (item == null) { 
+                return NotFound();
+            }
+            try
+            {
+                _context.Sizes.Remove(item);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));                
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] =  ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

@@ -24,10 +24,24 @@ namespace ShopInstallment.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Color model)
         {
-            if (!ModelState.IsValid) return View(model);
-            _context.Colors.Add(model);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid) {
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ"; 
+                return View(model);  
+            }
+
+            try
+            {
+                _context.Colors.Add(model);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "เพิ่มสีสำเร็จ";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) here as needed
+                TempData["ErrorMessage"] = ex.Message;
+                return View(model);
+            }
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -42,19 +56,47 @@ namespace ShopInstallment.Controllers
         public async Task<IActionResult> Edit(int id, Color model)
         {
             if (id != model.Id) return BadRequest();
-            if (!ModelState.IsValid) return View(model);
-            _context.Update(model);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid) {
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ"; 
+                return View(model);  
+            }
+
+            try
+            {
+                _context.Update(model);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "แก้ไขสีสำเร็จ";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) here as needed
+                TempData["ErrorMessage"] = ex.Message;
+                return View(model);
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _context.Colors.FindAsync(id);
-            if (item == null) return NotFound();
-            _context.Colors.Remove(item);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (item == null) 
+            { 
+                TempData["ErrorMessage"] = "ไม่พบสีที่ต้องการลบ";
+                return NotFound();
+            }
+            try
+            {
+                _context.Colors.Remove(item);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "ลบสีสำเร็จ";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) here as needed
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

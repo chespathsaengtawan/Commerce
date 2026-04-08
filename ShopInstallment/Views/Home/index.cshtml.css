@@ -1,0 +1,29 @@
+.hero-section {
+    background-image : url('/images/A1.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.mens-fashion {
+    background-image: url('/images/A2.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.kids-fashion {
+    background-image: url('/images/A3.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.cosmetics {
+    background-image: url('/images/A4.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.accessories {
+    background-image: url('/images/A5.jpg');
+    background-size: cover;
+    background-position: center;
+}

@@ -1,0 +1,33 @@
+obj/
+bin/
+*.user
+*.suo
+*.cache
+*.log
+*.vspscc
+*.vssscc
+*.dbmdl
+*.bak
+*.backup
+*.tmp
+*.ncb
+*.sdf
+*.pdb
+*.sln.docstates
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+# Visual Studio 2017 auto generated files
+Generated\ Files/
+# MSTest test Results
+TestResults/
+# NUNIT
+*.VisualState.xml
+# Build Results of an ATL Project
+[Dd]ebug/
+[Rr]elease/ 
+x64/
+x86/
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/

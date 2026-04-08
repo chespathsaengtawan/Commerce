@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using ShopInstallment.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShopInstallment.Data
 {
@@ -9,6 +10,7 @@ namespace ShopInstallment.Data
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
             // สร้าง Roles
             string[] roleNames = { "Admin", "Seller", "Buyer" };
@@ -54,6 +56,29 @@ namespace ShopInstallment.Data
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
             }
+
+            string[] genderNames = { "ชาย", "หญิง", "อื่นๆ" };
+            foreach (var genderName in genderNames)
+            {
+                var genderExist = await context.Genders.FirstOrDefaultAsync(g => g.Name == genderName);
+                if (genderExist == null)
+                {
+                    context.Genders.Add(new Gender { Name = genderName });
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            var existingCategories = await context.Categories.AnyAsync();
+            foreach (var category in context.Categories)
+            {
+                if (category.GenderId != null)
+                {
+                    category.GenderId = 1;
+                    context.Categories.Update(category);
+                    await context.SaveChangesAsync();
+                }
+            }
+            
         }
     }
 }

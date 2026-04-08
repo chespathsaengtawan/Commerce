@@ -27,6 +27,7 @@ namespace ShopInstallment.Controllers
             if (!ModelState.IsValid) return View(model);
             _context.Brands.Add(model);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "เพิ่มแบรนด์สำเร็จ";
             return RedirectToAction(nameof(Index));
         }
 
@@ -42,9 +43,13 @@ namespace ShopInstallment.Controllers
         public async Task<IActionResult> Edit(int id, Brand model)
         {
             if (id != model.Id) return BadRequest();
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid) {
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ";
+                return View(model);
+            }       
             _context.Update(model);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "แก้ไขแบรนด์สำเร็จ";
             return RedirectToAction(nameof(Index));
         }
 
@@ -54,6 +59,7 @@ namespace ShopInstallment.Controllers
             if (item == null) return NotFound();
             _context.Brands.Remove(item);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "ลบแบรนด์สำเร็จ";
             return RedirectToAction(nameof(Index));
         }
 
@@ -65,6 +71,7 @@ namespace ShopInstallment.Controllers
             item.Status = status;
             item.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "อัพเดทสถานะสำเร็จ";
             return RedirectToAction(nameof(Index));
         }
     }

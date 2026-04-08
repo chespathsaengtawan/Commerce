@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace ShopInstallment.Models
 {
     public class Category
@@ -20,6 +20,15 @@ namespace ShopInstallment.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+        [Required]
+        public int GenderId { get; set; }
+
+        [ForeignKey("GenderId")]
+        public virtual Gender? Gender { get; set; }
+
+        [StringLength(500)]
+        public string? CategoryImageUrl { get; set; }
+
+        public virtual ICollection<Product>? Products { get; set; }
     }
 }
